@@ -1,112 +1,96 @@
-import axios from "axios";
-import Image from "next/image";
+import Container from "@/src/components/common/container/Container";
+import Header from "@/src/components/common/header/Header";
+import { Badge } from "@/src/components/ui/badge";
+import { Button } from "@/src/components/ui/button";
+import Main from "@/src/components/ui/main";
+import Section from "@/src/components/ui/section";
+import { Rocket, Sparkles } from "lucide-react";
+import Link from "next/link";
 
 export default async function Home() {
-  try {
-    const data = await fetch("http://localhost:3000/api/auth/signup", {
-      method: "POST",
-    });
-  } catch (error) {
-    console.log(error);
-  }
-
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="w-full flex flex-col">
+      <Header className="w-full border">
+        <Container>
+          <div className="flex items-center justify-between py-[1rem]">
+            <div className="flex items-center gap-[1rem]">
+              <div className="logo">
+                <Rocket color="black" size={35} />
+              </div>
+              <h1 className="text-[1.25rem] font-bold">IdeaCrafter</h1>
+            </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            <nav className="text-[1.1rem]">
+              <ul className="flex items-center gap-4">
+                <li className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="#">Home</Link>
+                </li>
+                <li className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="#">Categories</Link>
+                </li>
+                <li className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="#">Startups</Link>
+                </li>
+                <li className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="#">Generate Idea</Link>
+                </li>
+              </ul>
+            </nav>
+            <div className="flex gap-[0.5rem]">
+              <Link href={"/auth/signin"}>
+                <Button className="cursor-pointer" variant={"outline"}>
+                  Login
+                </Button>
+              </Link>
+
+              <Link href={"/auth/signup"}>
+                <Button className="cursor-pointer">Register</Button>
+              </Link>
+            </div>
+          </div>
+        </Container>
+      </Header>
+      <Main>
+        <Section className="w-full pt-[8rem]">
+          <Container>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="flex flex-col gap-[1.1rem]">
+                <Badge className="py-[0.2rem]" variant={"outline"}>
+                  <Sparkles size={30} />
+                  <h1 className="text-[0.8rem] ">Welcome to IdeaCrafter</h1>
+                </Badge>
+                <div className="flex flex-col gap-[0.8rem]">
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+                    Discover and Build Your
+                    <span className="text-blue-600"> Next Startup </span>
+                  </h1>
+                  <p className="text-lg font-medium text-muted-foreground leading-relaxed max-w-md">
+                    Join a community of young entrepreneurs. Explore innovative
+                    ideas, find collaborators, and turn your vision into reality
+                    with AI-powered insights.
+                  </p>
+                </div>
+                <div className="flex gap-[1rem]">
+                  <Link href={"/generate-idea"}>
+                    <Button className=" text-2xl py-[1.4rem]">
+                      <Rocket />
+                      Generate Idea with AI
+                    </Button>
+                  </Link>
+                  <Link href={"/startups"}>
+                    <Button
+                      variant={"outline"}
+                      className="cursor-pointer text-2xl py-[1.4rem]"
+                    >
+                      Explore startups
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Container>
+        </Section>
+      </Main>
     </div>
   );
 }
