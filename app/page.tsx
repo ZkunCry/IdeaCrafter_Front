@@ -4,8 +4,10 @@ import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
 import Main from "@/src/components/ui/main";
 import Section from "@/src/components/ui/section";
-import { Rocket, Sparkles } from "lucide-react";
+import { Rocket, Sparkles, Users, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import StartupImage from "@/src/assets/startup.jpg";
 
 export default async function Home() {
   return (
@@ -72,7 +74,7 @@ export default async function Home() {
                 </div>
                 <div className="flex gap-[1rem]">
                   <Link href={"/generate-idea"}>
-                    <Button className=" text-2xl py-[1.4rem]">
+                    <Button className=" text-xl py-[1.4rem]">
                       <Rocket />
                       Generate Idea with AI
                     </Button>
@@ -80,11 +82,26 @@ export default async function Home() {
                   <Link href={"/startups"}>
                     <Button
                       variant={"outline"}
-                      className="cursor-pointer text-2xl py-[1.4rem]"
+                      className="cursor-pointer text-xl py-[1.4rem]"
                     >
                       Explore startups
                     </Button>
                   </Link>
+                </div>
+              </div>
+              <div className="relative">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                  <Image src={StartupImage} alt="hero" />
+                </div>
+                <div className="absolute bottom-[-30] left-0 transform -translate-x-1/2 -translate-y-1/2 z-10">
+                  <div className="bg-blue-600 p-[0.7rem] rounded-full">
+                    <Users color="white" size={30} />
+                  </div>
+                </div>
+                <div className="absolute top-[-20] right-[-10] transform z-10 animate-pulse">
+                  <div className="bg-primary p-[0.7rem] rounded-full">
+                    <TrendingUp color="white" size={30} />
+                  </div>
                 </div>
               </div>
             </div>
