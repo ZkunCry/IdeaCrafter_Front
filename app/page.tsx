@@ -4,56 +4,27 @@ import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
 import Main from "@/src/components/ui/main";
 import Section from "@/src/components/ui/section";
-import { Rocket, Sparkles, Users, TrendingUp } from "lucide-react";
+import { Rocket, Sparkles, Users, TrendingUp, Heart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import StartupImage from "@/src/assets/startup.jpg";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+  CardAction,
+} from "@/src/components/ui/card";
+import HeaderMain from "@/src/components/widgets/header/HeaderMain";
 
 export default async function Home() {
   return (
     <div className="w-full flex flex-col">
-      <Header className="w-full border">
-        <Container>
-          <div className="flex items-center justify-between py-[1rem]">
-            <div className="flex items-center gap-[1rem]">
-              <div className="logo">
-                <Rocket color="black" size={35} />
-              </div>
-              <h1 className="text-[1.25rem] font-bold">IdeaCrafter</h1>
-            </div>
-
-            <nav className="text-[1.1rem]">
-              <ul className="flex items-center gap-4">
-                <li className="text-muted-foreground hover:text-primary transition-colors">
-                  <Link href="#">Home</Link>
-                </li>
-                <li className="text-muted-foreground hover:text-primary transition-colors">
-                  <Link href="#">Categories</Link>
-                </li>
-                <li className="text-muted-foreground hover:text-primary transition-colors">
-                  <Link href="#">Startups</Link>
-                </li>
-                <li className="text-muted-foreground hover:text-primary transition-colors">
-                  <Link href="#">Generate Idea</Link>
-                </li>
-              </ul>
-            </nav>
-            <div className="flex gap-[0.5rem]">
-              <Link href={"/auth/signin"}>
-                <Button className="cursor-pointer" variant={"outline"}>
-                  Login
-                </Button>
-              </Link>
-
-              <Link href={"/auth/signup"}>
-                <Button className="cursor-pointer">Register</Button>
-              </Link>
-            </div>
-          </div>
-        </Container>
-      </Header>
+      <HeaderMain />
       <Main>
-        <Section className="w-full pt-[8rem]">
+        <Section className="w-full pt-[9rem]">
           <Container>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="flex flex-col gap-[1.1rem]">
@@ -104,6 +75,87 @@ export default async function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+          </Container>
+        </Section>
+        <Section className="w-full pt-[8rem]">
+          <Container>
+            <div className="flex lg:flex-row flex-col">
+              <div className="flex-1 lg:order-1 gap-8">
+                <div className="flex flex-col gap-8">
+                  <div className="flex flex-col gap-4">
+                    <h2 className="text-2xl font-bold text-foreground">
+                      Trending Startup Ideas
+                    </h2>
+                    <p className="text-muted-foreground">
+                      Discover the most popular and innovative startup ideas
+                      from our community
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="w-full gap-3 group hover:shadow-lg transition-all duration-200 hover:-translate-y-1 cursor-pointer">
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <Badge
+                            className="font-semibold"
+                            variant={"secondary"}
+                          >
+                            Green Tech
+                          </Badge>
+                          <div className="flex items-end gap-1 text-green-600">
+                            <TrendingUp size={18} />
+                            <span className="text-sm">Trending</span>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <CardTitle>
+                          <h3 className="font-semibold tracking-tight text-lg leading-tight group-hover:text-blue-600 transition-colors">
+                            EcoTrack - carbon Footpring Tracker
+                          </h3>{" "}
+                        </CardTitle>
+                        <CardDescription className="mt-3">
+                          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                            AI-powered app that helps individuals and businesses
+                            track, reduce, and offset their carbon footprint
+                            through personalized recommendations and
+                            gamification.
+                          </p>
+                        </CardDescription>
+                        <div className="flex gap-2">
+                          <Badge variant={"outline"}>AI</Badge>
+                          <Badge variant={"outline"}>Sustainability</Badge>
+                          <Badge variant={"outline"}>Mobile</Badge>
+                        </div>
+                      </CardContent>
+                      <CardFooter>
+                        <div className="flex w-full justify-between">
+                          <div className="flex items-center gap-1">
+                            <Users
+                              className="text-muted-foreground"
+                              size={14}
+                            />
+                            <span className="text-sm text-muted-foreground">
+                              12
+                            </span>
+                          </div>
+                          <CardAction>
+                            <Button
+                              className="cursor-pointer"
+                              variant={"outline"}
+                            >
+                              <Heart />
+                              Favorite
+                            </Button>
+                          </CardAction>
+                        </div>
+                      </CardFooter>
+                    </Card>
+                  </div>
+                </div>
+              </div>
+              <div className="flex"></div>
             </div>
           </Container>
         </Section>
