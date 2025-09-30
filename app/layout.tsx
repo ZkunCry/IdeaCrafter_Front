@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import "./globals.css";
+import Providers from "@/src/providers/QueryClientProvider";
+import { Toaster } from "@/src/components/ui/sonner";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -22,7 +24,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${roboto.variable} antialiased `}>
         <div className="relative overflow-y-auto overflow-x-hidden min-h-screen flex flex-col items-center">
-          {children}
+          <Providers>
+            {children}
+            <Toaster />
+          </Providers>
         </div>
       </body>
     </html>

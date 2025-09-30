@@ -23,46 +23,36 @@ import {
   FormLabel,
   FormMessage,
 } from "@/src/components/ui/form";
-import { Lightbulb, Eye, EyeOff, Rocket } from "lucide-react";
+import { Lightbulb, Eye, EyeOff } from "lucide-react";
+import { useSignUp } from "./useSignUp";
 
-const signUpSchema = z
-  .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Please enter a valid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string(),
-    agreeToTerms: z.boolean().refine((val) => val === true, {
-      message: "You must agree to the terms and conditions",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-type SignUpForm = z.infer<typeof signUpSchema>;
+import { signUpSchema, SignUpForm, defaultValues } from "./schema";
+import { useSetCredentials } from "@/src/store/user";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
-
+  const { mutateAsync: signUp, isPending, isError, error } = useSignUp();
+  const setCredentials = useSetCredentials();
   const form = useForm<SignUpForm>({
     resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      agreeToTerms: false,
-    },
+    defaultValues,
   });
 
   const onSubmit = async (data: SignUpForm) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    toast("Account created!", {
-      description:
-        "Welcome to IdeaCrafter. Please check your email to verify your account.",
-    });
-    console.log("Sign up data:", data);
+    const { confirmPassword, agreeToTerms, ...rest } = data;
+    try {
+      const responseData = await signUp(data);
+      setCredentials(responseData);
+      toast("Account created!", {
+        description:
+          "Welcome to IdeaCrafter. Please check your email to verify your account.",
+      });
+    } catch (error) {
+      toast.error("Account wasn't created", {
+        description:
+          error?.message ?? "Something went wrong. Please try again later.",
+      });
+    }
   };
 
   return (
@@ -96,7 +86,7 @@ const SignUp = () => {
               >
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="username"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Full Name</FormLabel>
