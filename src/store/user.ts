@@ -1,6 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { AuthResponse } from "../components/features/auth/api/authApi";
+import {
+  AuthService,
+  type AuthResponse,
+} from "../components/features/auth/api/authApi";
+import type { IUser } from "../components/features/user/api/userApi";
 export interface UserState {
   id: string;
   username: string;
@@ -11,38 +15,66 @@ export interface UserState {
     setId: (id: string) => void;
     setIsAuth: (isAuth: boolean) => void;
     setCredentials: (credentials: AuthResponse) => void;
+    getUser: () => void;
+    deleteCredentials: () => void;
   };
 }
 
-export const useUserStore = create<UserState>()(
-  persist(
-    (set) => ({
-      id: "",
-      username: "",
-      email: "",
-      avatarUrl: "",
-      isAuth: false,
-      actions: {
-        setId: (id: string) => set({ id }),
-        setIsAuth: (isAuth: boolean) => set({ isAuth }),
-        setCredentials: (credentials: AuthResponse) => {
-          set({
-            id: credentials.id,
-            username: credentials.username,
-            email: credentials.email,
-            avatarUrl: "",
-            isAuth: true,
-          });
-        },
-      },
-    }),
-    {
-      name: "user-store",
-    }
-  )
-);
+export const useUserStore = create<UserState>()((set) => ({
+  id: "",
+  username: "",
+  email: "",
+  avatarUrl: "",
+  isAuth: false,
+  actions: {
+    setId: (id: string) => set({ id }),
+    setIsAuth: (isAuth: boolean) => set({ isAuth }),
+    setCredentials: (credentials: AuthResponse) => {
+      set({
+        id: credentials.id,
+        username: credentials.username,
+        email: credentials.email,
+        avatarUrl: "",
+        isAuth: true,
+      });
+    },
+    deleteCredentials: () => {
+      set({
+        id: "",
+        username: "",
+        email: "",
+        avatarUrl: "",
+        isAuth: false,
+      });
+    },
+    getUser: async () => {
+      try {
+        const response = await AuthService.identityMe();
+        set({
+          ...response,
+          isAuth: true,
+        });
+      } catch (error) {
+        set({
+          id: "",
+          username: "",
+          email: "",
+          avatarUrl: "",
+          isAuth: false,
+        });
+      }
+    },
+  },
+}));
+
 export const useSetId = () => useUserStore((state) => state.actions.setId);
 export const useSetToken = () =>
   useUserStore((state) => state.actions.setIsAuth);
 export const useSetCredentials = () =>
   useUserStore((state) => state.actions.setCredentials);
+
+export const useGetUser = () =>
+  useUserStore((state) => {
+    return state.actions.getUser;
+  });
+export const useUser = () => useUserStore((state) => state);

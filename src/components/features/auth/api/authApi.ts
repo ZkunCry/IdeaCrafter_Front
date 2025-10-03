@@ -25,4 +25,12 @@ export const AuthService = {
     );
     return response.data;
   },
+  async identityMe() {
+    const response = await axiosInstance.post<AuthResponse>("/auth/me");
+    return response.data;
+  },
+  async refresh() {
+    const response = await axiosInstance.post<AuthResponse>("/auth/refresh");
+    return response.data;
+  },
 };

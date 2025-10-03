@@ -18,11 +18,13 @@ import {
   CardAction,
 } from "@/src/components/ui/card";
 import HeaderMain from "@/src/components/widgets/header/HeaderMain";
+import { Suspense } from "react";
 
 export default async function Home() {
   return (
     <div className="w-full flex flex-col">
       <HeaderMain />
+
       <Main>
         <Section className="w-full pt-[9rem]">
           <Container>

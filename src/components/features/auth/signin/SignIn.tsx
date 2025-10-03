@@ -3,9 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
-
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import {
@@ -23,32 +21,34 @@ import {
   FormLabel,
   FormMessage,
 } from "@/src/components/ui/form";
-import { Lightbulb, Eye, EyeOff, Rocket } from "lucide-react";
-
-const signInSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-type SignInForm = z.infer<typeof signInSchema>;
+import { Eye, EyeOff, Rocket } from "lucide-react";
+import { defaultValues, SignInForm, signInSchema } from "./schema";
+import { useSignIn } from "./useSignIn";
+import { useSetCredentials } from "@/src/store/user";
+import { useRouter } from "next/navigation";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
-
+  const setCredentials = useSetCredentials();
+  const router = useRouter();
   const form = useForm<SignInForm>({
     resolver: zodResolver(signInSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues,
   });
-
+  const { mutateAsync: signIn } = useSignIn();
   const onSubmit = async (data: SignInForm) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    toast("Welcome back!", {
-      description: "You have successfully signed in.",
-    });
-    console.log("Sign in data:", data);
+    try {
+      const response = await signIn(data);
+      toast("Welcome back!", {
+        description: "You have successfully signed in.",
+      });
+      setCredentials(response);
+      router.push("/");
+    } catch (error) {
+      toast("Something went wrong", {
+        description: error?.message,
+      });
+    }
   };
 
   return (

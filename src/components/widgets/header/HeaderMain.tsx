@@ -1,10 +1,19 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import Header from "@/src/components/common/header/Header";
 import Container from "@/src/components/common/container/Container";
 import { Rocket } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
+import { useGetUser, useUser } from "@/src/store/user";
+import { Skeleton } from "../../ui/skeleton";
 const HeaderMain = () => {
+  const getUser = useGetUser();
+  const user = useUser();
+  console.log(user);
+  useEffect(() => {
+    getUser();
+  }, []);
   return (
     <Header className="w-full border fixed top-0 z-50  border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <Container>
@@ -34,17 +43,33 @@ const HeaderMain = () => {
               </li>
             </ul>
           </nav>
-          <div className="flex gap-[0.5rem]">
-            <Link href={"/auth/signin"}>
-              <Button className="cursor-pointer" variant={"outline"}>
-                Login
-              </Button>
-            </Link>
+          {!user.id ? (
+            <div className="flex items-center gap-1">
+              <Skeleton className="h-[40px] w-[40px] rounded-full" />
 
-            <Link href={"/auth/signup"}>
-              <Button className="cursor-pointer">Register</Button>
-            </Link>
-          </div>
+              <Skeleton className="h-[20px] w-[100px]" />
+            </div>
+          ) : user.isAuth ? (
+            <div className="flex gap-[0.5rem]">
+              <Link href={"/account"}>
+                <Button variant={"outline"} className="cursor-pointer">
+                  {user.username}
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="flex gap-[0.5rem]">
+              <Link href={"/auth/signin"}>
+                <Button className="cursor-pointer" variant={"outline"}>
+                  Login
+                </Button>
+              </Link>
+
+              <Link href={"/auth/signup"}>
+                <Button className="cursor-pointer">Register</Button>
+              </Link>
+            </div>
+          )}
         </div>
       </Container>
     </Header>

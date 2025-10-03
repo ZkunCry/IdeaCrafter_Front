@@ -6,9 +6,11 @@ async function provider(
   req: NextRequest,
   ctx: { params: { proxy: string[] } }
 ) {
-  let url = `${apiServer}${ctx.params.proxy.join("/")}`;
-  console.log("@url", url);
+  const params = await ctx.params;
+  let url = `${apiServer}${params.proxy.join("/")}`;
+  let body;
   const search = req.nextUrl.searchParams.toString();
+  console.log("@url", url);
   if (search) {
     url += `?${search}`;
   }
@@ -17,7 +19,6 @@ async function provider(
     headers.append(k, v);
   });
 
-  let body;
   try {
     body = await req.json();
   } catch {

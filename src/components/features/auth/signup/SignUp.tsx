@@ -28,10 +28,12 @@ import { useSignUp } from "./useSignUp";
 
 import { signUpSchema, SignUpForm, defaultValues } from "./schema";
 import { useSetCredentials } from "@/src/store/user";
+import { useRouter } from "next/navigation";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { mutateAsync: signUp, isPending, isError, error } = useSignUp();
+  const router = useRouter();
   const setCredentials = useSetCredentials();
   const form = useForm<SignUpForm>({
     resolver: zodResolver(signUpSchema),
@@ -43,9 +45,9 @@ const SignUp = () => {
     try {
       const responseData = await signUp(data);
       setCredentials(responseData);
+      router.push("/");
       toast("Account created!", {
-        description:
-          "Welcome to IdeaCrafter. Please check your email to verify your account.",
+        description: "Welcome to IdeaCrafter.",
       });
     } catch (error) {
       toast.error("Account wasn't created", {
