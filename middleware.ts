@@ -1,42 +1,33 @@
+// middleware.ts
 import { NextResponse, type NextRequest } from "next/server";
-import { cookies } from "next/headers";
-import { API } from "./src/constants/config";
 
 const protectedRoutes = ["/account"];
-const authRoutes = ["/auth/signin", "/auth/signup"];
 
 export default async function middleware(req: NextRequest) {
-  const path = req.nextUrl.pathname;
+  const accessToken = req.cookies.get("access_token")?.value;
+  const refreshToken = req.cookies.get("refresh_token")?.value;
+  const isProtected = protectedRoutes.some((r) =>
+    req.nextUrl.pathname.startsWith(r)
+  );
 
-  const allCookies = (await cookies()).getAll();
-  const accessToken = allCookies.find((c) => c.name === "access_token");
-  const refreshToken = allCookies.find((c) => c.name === "refresh_token");
+  if (!isProtected) return NextResponse.next();
 
-  if (authRoutes.includes(path) && accessToken) {
-    return NextResponse.redirect(new URL("/not-found", req.url));
+  if (!accessToken && !refreshToken) {
+    const url = new URL("/auth/signin", req.url);
+    url.searchParams.set("reason", "session_expired");
+    return NextResponse.redirect(url);
   }
-
-  if (protectedRoutes.includes(path)) {
+  if (!accessToken && refreshToken) {
     try {
-      const res = await fetch(`${API.BASE_URL}/auth/me`, {
+      const res = await fetch(`${req.nextUrl.origin}/api/auth/refresh`, {
         method: "POST",
-        headers: {
-          cookie: allCookies.map((c) => `${c.name}=${c.value}`).join("; "),
-        },
-        cache: "no-store",
+        headers: { cookie: `refresh_token=${refreshToken}` },
       });
 
-      if (!res.ok) {
-        return NextResponse.redirect(new URL("/auth/signin", req.url));
+      if (res.ok) {
+        return NextResponse.next();
       }
-    } catch (err) {
-      console.error(err);
-      return NextResponse.redirect(new URL("/auth/signin", req.url));
-    }
-
-    if (accessToken || refreshToken) {
-      return NextResponse.next();
-    } else {
+    } catch {
       return NextResponse.redirect(new URL("/auth/signin", req.url));
     }
   }
@@ -45,5 +36,6 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/account/:path*", "/auth/:path*"],
+  matcher: ["/account/:path*"],
+  runtime: "nodejs",
 };

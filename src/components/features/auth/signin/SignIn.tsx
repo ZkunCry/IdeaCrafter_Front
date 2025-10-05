@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,10 +25,23 @@ import { Eye, EyeOff, Rocket } from "lucide-react";
 import { defaultValues, SignInForm, signInSchema } from "./schema";
 import { useSignIn } from "./useSignIn";
 import { useSetCredentials } from "@/src/store/user";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const searchParams = useSearchParams();
+  const reason = searchParams.get("reason");
+  useEffect(() => {
+    if (reason === "session_expired") {
+      const timer = setTimeout(() => {
+        toast("Ваша сессия истекла", {
+          description: "Пожалуйста, войдите снова",
+        });
+      }, 100); // 100–300 мс достаточно
+
+      return () => clearTimeout(timer);
+    }
+  }, [reason]);
   const setCredentials = useSetCredentials();
   const router = useRouter();
   const form = useForm<SignInForm>({
@@ -36,6 +49,7 @@ const SignIn = () => {
     defaultValues,
   });
   const { mutateAsync: signIn } = useSignIn();
+
   const onSubmit = async (data: SignInForm) => {
     try {
       const response = await signIn(data);

@@ -26,7 +26,7 @@ export default function RootLayout({
         <div className="relative overflow-y-auto overflow-x-hidden min-h-screen flex flex-col items-center">
           <Providers>
             {children}
-            <Toaster />
+            <Toaster position="bottom-right" />
           </Providers>
         </div>
       </body>

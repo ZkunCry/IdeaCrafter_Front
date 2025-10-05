@@ -2,6 +2,7 @@ import axios from "axios";
 import { API } from "../constants/config";
 import { AuthService } from "../components/features/auth/api/authApi";
 import { useUserStore } from "../store/user";
+import { toast } from "sonner";
 export const axiosInstance = axios.create({
   baseURL: API.BASE_URL,
   headers: {
@@ -37,11 +38,14 @@ axiosInstance.interceptors.request.use(async (config) => {
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
+    const isSSR = typeof window === "undefined";
+    if (!isSSR) toast.error(error.response.data.message);
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
+        console.log("we inside");
         await AuthService.refresh();
         return axiosInstance(originalRequest);
       } catch {
