@@ -19,7 +19,7 @@ import { Textarea } from "@/src/components/ui/textarea";
 const Profile = () => {
   return (
     <div className="space-y-6 animate-fade-in">
-      <h2 className="text-2xl font-semibold">Profile</h2>
+      <h2 className="text-2xl font-semibold">Account dashboard</h2>
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="hover-scale">
           <CardHeader>
@@ -32,7 +32,7 @@ const Profile = () => {
                 <AvatarImage src="" />
                 <AvatarFallback className="text-2xl">TU</AvatarFallback>
               </Avatar>
-              <Button variant="outline" className="hover-scale">
+              <Button variant="outline" className="cursor-pointer hover-scale ">
                 <Upload className="h-4 w-4 mr-2" />
                 Upload Photo
               </Button>
@@ -60,7 +60,7 @@ const Profile = () => {
                   className="mt-1"
                 />
               </div>
-              <Button className="w-full hover-scale">Save Changes</Button>
+              <Button className="w-full hover-scale ">Save Changes</Button>
             </div>
           </CardContent>
         </Card>

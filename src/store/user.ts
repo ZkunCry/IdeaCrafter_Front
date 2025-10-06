@@ -20,7 +20,7 @@ export interface UserState {
   };
 }
 
-export const useUserStore = create<UserState>()((set) => ({
+export const useUserStore = create<UserState>()((set, get) => ({
   id: "",
   username: "",
   email: "",
@@ -48,7 +48,10 @@ export const useUserStore = create<UserState>()((set) => ({
       });
     },
     getUser: async () => {
+      const user = get();
+      if (user.id) return;
       try {
+        console.log("we are here");
         const response = await AuthService.identityMe();
         set({
           ...response,
