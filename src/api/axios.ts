@@ -39,7 +39,10 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const isSSR = typeof window === "undefined";
-    if (!isSSR) toast.error(error.response.data.message);
+    if (!isSSR)
+      toast.error("Something went wrong", {
+        description: error.response.data.message,
+      });
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {

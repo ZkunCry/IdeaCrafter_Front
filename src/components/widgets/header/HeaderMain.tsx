@@ -7,6 +7,7 @@ import { Rocket } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { useGetUser, useUser } from "@/src/store/user";
 import { Skeleton } from "../../ui/skeleton";
+import { Avatar, AvatarImage, AvatarFallback } from "../../ui/avatar";
 const HeaderMain = () => {
   const getUser = useGetUser();
   const user = useUser();
@@ -52,7 +53,16 @@ const HeaderMain = () => {
           ) : user.isAuth ? (
             <div className="flex gap-[0.5rem]">
               <Link href={"/account"}>
-                <Button variant={"outline"} className="cursor-pointer">
+                <Button
+                  variant={"outline"}
+                  className="cursor-pointer py-[1.5rem]"
+                >
+                  <Avatar className="h-[30px] w-[30px]">
+                    <AvatarImage src="" />
+                    <AvatarFallback className="text-lg">
+                      {user.username.slice(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                   {user.username}
                 </Button>
               </Link>

@@ -72,7 +72,7 @@ export default async function Home() {
                   </div>
                 </div>
                 <div className="absolute top-[-20] right-[-10] transform z-10 animate-pulse">
-                  <div className="bg-primary p-[0.7rem] rounded-full">
+                  <div className="bg-green-600 p-[0.7rem] rounded-full">
                     <TrendingUp color="white" size={30} />
                   </div>
                 </div>
