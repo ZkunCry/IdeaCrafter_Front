@@ -40,84 +40,44 @@ import {
   Building2,
 } from "lucide-react";
 import { toast } from "sonner";
-const formSchema = z.object({
-  title: z
-    .string()
-    .min(3, "Название должно быть не менее 3 символов")
-    .max(100, "Название слишком длинное"),
-  description: z
-    .string()
-    .min(20, "Описание должно быть не менее 20 символов")
-    .max(1000, "Описание слишком длинное"),
-  category: z.string().min(1, "Выберите категорию"),
-  targetAudience: z.string().min(3, "Укажите целевую аудиторию").max(200),
-  problem: z
-    .string()
-    .min(10, "Опишите проблему (минимум 10 символов)")
-    .max(500),
-  solution: z
-    .string()
-    .min(10, "Опишите решение (минимум 10 символов)")
-    .max(500),
-  stage: z.string().min(1, "Выберите стадию развития"),
-  tags: z.string().min(1, "Добавьте хотя бы один тег"),
-  teamSize: z.string().min(1, "Укажите размер команды"),
-  lookingFor: z.string().min(1, "Укажите, кого вы ищете"),
-});
-
-const CreateStartup = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+import {
+  MultiSelect,
+  MultiSelectItem,
+  MultiSelectTrigger,
+  MultiSelectValue,
+  MultiSelectContent,
+} from "@/src/components/ui/multi-select";
+import { Stage } from "../types";
+import { formSchema } from "./schema";
+import { useCreateStartup } from "./useStartup";
+import axios, { Axios, type AxiosError } from "axios";
+const CreateStartup = ({ stages }: { stages: Stage[] }) => {
+  const { mutateAsync: createStartup, isPending } = useCreateStartup();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
+      name: "",
       description: "",
-      category: "",
+      shortDescription: "",
+      // category_ids: [],
       targetAudience: "",
       problem: "",
       solution: "",
-      stage: "",
-      tags: "",
-      teamSize: "",
-      lookingFor: "",
+      stage_id: 0,
     },
   });
 
-  const categories = [
-    "Технологии",
-    "Здравоохранение",
-    "Финансы",
-    "Образование",
-    "E-commerce",
-    "Еда и напитки",
-    "Путешествия",
-    "Развлечения",
-    "Социальное влияние",
-    "Другое",
-  ];
-
-  const stages = [
-    "Идея",
-    "MVP разработка",
-    "Бета-тестирование",
-    "Запущен продукт",
-    "Раннее развитие",
-    "Масштабирование",
-  ];
-
-  const lookingForOptions = [
-    "Со-основатель",
-    "Разработчики",
-    "Дизайнеры",
-    "Маркетологи",
-    "Инвесторы",
-    "Менторы",
-    "Советники",
-  ];
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    setIsSubmitting(true);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const response = await createStartup(values);
+      toast.success("Стартап успешно создан!");
+    } catch (error: Error | AxiosError) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.message);
+      } else {
+        toast.error(error.message);
+      }
+    }
   };
 
   return (
@@ -138,7 +98,6 @@ const CreateStartup = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Benefits */}
         <div className="lg:col-span-1 space-y-4">
           <Card>
             <CardHeader>
@@ -146,8 +105,11 @@ const CreateStartup = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-start space-x-3">
-                <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-full flex-shrink-0">
-                  <Users className="w-4 h-4 text-primary" />
+                <div className="flex items-center justify-center w-8 h-8 bg-sky-500/50 rounded-full flex-shrink-0">
+                  <Users
+                    className="w-4 h-4 text-primary"
+                    color="oklch(58.5% 0.169 237.323)"
+                  />
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm text-foreground">
@@ -161,7 +123,7 @@ const CreateStartup = () => {
 
               <div className="flex items-start space-x-3">
                 <div className="flex items-center justify-center w-8 h-8 bg-success/10 rounded-full flex-shrink-0">
-                  <Target className="w-4 h-4 text-success" />
+                  <Target className="w-4 h-4 text-success" color="green" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm text-foreground">
@@ -215,12 +177,16 @@ const CreateStartup = () => {
             <CardContent>
               <Form {...form}>
                 <form
-                  onSubmit={form.handleSubmit(onSubmit)}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    console.log("onSubmit wrapper triggered");
+                    form.handleSubmit(onSubmit)(e);
+                  }}
                   className="space-y-6"
                 >
                   <FormField
                     control={form.control}
-                    name="title"
+                    name="name"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Название стартапа *</FormLabel>
@@ -240,6 +206,28 @@ const CreateStartup = () => {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
+                        <FormLabel>Описание *</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Опишите вашу идею в нескольких предложениях..."
+                            rows={4}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Описание в двух словах того, чем занимается ваш
+                          стартап
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="shortDescription"
+                    render={({ field }) => (
+                      <FormItem>
                         <FormLabel>Краткое описание *</FormLabel>
                         <FormControl>
                           <Textarea
@@ -249,52 +237,57 @@ const CreateStartup = () => {
                           />
                         </FormControl>
                         <FormDescription>
-                          Краткое и понятное описание того, чем занимается ваш
-                          стартап
+                          Краткое описание того, чем занимается ваш стартап
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
+                  <div className="grid grid-cols-1  gap-6">
+                    {/* <FormField
                       control={form.control}
                       name="category"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Категория *</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
+                          <MultiSelect
+                            onValuesChange={field.onChange}
+                            defaultValues={field.value}
                           >
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Выберите категорию" />
-                              </SelectTrigger>
+                              <MultiSelectTrigger>
+                                <MultiSelectValue placeholder="Выберите категорию" />
+                              </MultiSelectTrigger>
                             </FormControl>
-                            <SelectContent>
-                              {categories.map((cat) => (
-                                <SelectItem key={cat} value={cat}>
-                                  {cat}
-                                </SelectItem>
+                            <MultiSelectContent>
+                              {categories.map((category) => (
+                                <MultiSelectItem
+                                  key={category}
+                                  value={category}
+                                >
+                                  {category}
+                                </MultiSelectItem>
                               ))}
-                            </SelectContent>
-                          </Select>
+                            </MultiSelectContent>
+                          </MultiSelect>
                           <FormMessage />
                         </FormItem>
                       )}
-                    />
+                    /> */}
 
                     <FormField
                       control={form.control}
-                      name="stage"
+                      name="stage_id"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Стадия развития *</FormLabel>
+
                           <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value ? String(field.value) : ""}
+                            onValueChange={(value) =>
+                              field.onChange(Number(value))
+                            }
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -302,11 +295,16 @@ const CreateStartup = () => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {stages.map((stage) => (
-                                <SelectItem key={stage} value={stage}>
-                                  {stage}
-                                </SelectItem>
-                              ))}
+                              {stages.map((stage) => {
+                                return (
+                                  <SelectItem
+                                    key={stage.ID}
+                                    value={String(stage.ID)}
+                                  >
+                                    {stage.name}
+                                  </SelectItem>
+                                );
+                              })}
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -368,7 +366,7 @@ const CreateStartup = () => {
                     )}
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
                       name="teamSize"
@@ -423,9 +421,9 @@ const CreateStartup = () => {
                         </FormItem>
                       )}
                     />
-                  </div>
+                  </div> */}
 
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="tags"
                     render={({ field }) => (
@@ -443,7 +441,7 @@ const CreateStartup = () => {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
 
                   <div className="flex items-center justify-end space-x-4 pt-4">
                     <Button
@@ -453,13 +451,8 @@ const CreateStartup = () => {
                     >
                       Сбросить
                     </Button>
-                    <Button
-                      type="submit"
-                      size="lg"
-                      disabled={isSubmitting}
-                      variant={"primary"}
-                    >
-                      {isSubmitting ? (
+                    <Button type="submit" size="lg">
+                      {isPending ? (
                         <>
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
                           Публикуем...

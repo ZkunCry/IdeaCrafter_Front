@@ -36,20 +36,21 @@ export default async function Home() {
                 </Badge>
                 <div className="flex flex-col gap-[0.8rem]">
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-                    Discover and Build Your
-                    <span className="text-blue-600"> Next Startup </span>
+                    Откройте для себя и создайте свой
+                    <span className="text-blue-600"> следующий стартап </span>
                   </h1>
                   <p className="text-lg font-medium text-muted-foreground leading-relaxed max-w-md">
-                    Join a community of young entrepreneurs. Explore innovative
-                    ideas, find collaborators, and turn your vision into reality
-                    with AI-powered insights.
+                    Присоединяйтесь к сообществу молодых предпринимателей.
+                    Изучайте инновационные идеи, находите единомышленников и
+                    воплощайте свои идеи в реальность с помощью аналитики на
+                    основе искусственного интеллекта.
                   </p>
                 </div>
                 <div className="flex gap-[1rem]">
                   <Link href={"/generate-idea"}>
                     <Button className=" text-xl py-[1.4rem]">
                       <Rocket />
-                      Generate Idea with AI
+                      Генерация идеи при помощи AI
                     </Button>
                   </Link>
                   <Link href={"/startups"}>
@@ -57,7 +58,7 @@ export default async function Home() {
                       variant={"outline"}
                       className="cursor-pointer text-xl py-[1.4rem]"
                     >
-                      Explore startups
+                      Исследовать стартапы
                     </Button>
                   </Link>
                 </div>
@@ -87,11 +88,11 @@ export default async function Home() {
                 <div className="flex flex-col gap-8">
                   <div className="flex flex-col gap-4">
                     <h2 className="text-2xl font-bold text-foreground">
-                      Trending Startup Ideas
+                      Популярные идеи для стартапов
                     </h2>
                     <p className="text-muted-foreground">
-                      Discover the most popular and innovative startup ideas
-                      from our community
+                      Откройте для себя самые популярные и инновационные идеи
+                      для стартапов от нашего сообщества
                     </p>
                   </div>
 

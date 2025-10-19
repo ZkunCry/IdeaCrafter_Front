@@ -34,29 +34,43 @@ axiosInstance.interceptors.request.use(async (config) => {
 
   return config;
 });
-
+let countRefresh = 0;
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const isSSR = typeof window === "undefined";
-    if (!isSSR)
-      toast.error("Something went wrong", {
-        description: error.response.data.message,
-      });
     const originalRequest = error.config;
+    console.log("ssss");
+    if (!isSSR) {
+      toast.error("Something went wrong", {
+        description: error.response?.data?.message || error.message,
+      });
+    }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      countRefresh < 1
+    ) {
       originalRequest._retry = true;
+      countRefresh++;
       try {
-        console.log("we inside");
-        await AuthService.refresh();
+        const refreshResponse = await AuthService.refresh();
+
+        if (refreshResponse.status === 401) {
+          useUserStore.getState().actions.deleteCredentials();
+
+          return Promise.reject(error);
+        }
+
         return axiosInstance(originalRequest);
-      } catch {
+      } catch (refreshError: any) {
         useUserStore.getState().actions.deleteCredentials();
 
-        return Promise.reject(error);
+        return Promise.reject(refreshError);
       }
     }
+
     return Promise.reject(error);
   }
 );

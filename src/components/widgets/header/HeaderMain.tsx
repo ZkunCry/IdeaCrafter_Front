@@ -44,7 +44,7 @@ const HeaderMain = () => {
               </li>
             </ul>
           </nav>
-          {!user.id ? (
+          {!user.id && !user.error ? (
             <div className="flex items-center gap-1">
               <Skeleton className="h-[40px] w-[40px] rounded-full" />
 

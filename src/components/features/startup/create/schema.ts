@@ -1,0 +1,32 @@
+import z from "zod";
+export const formSchema = z.object({
+  name: z
+    .string()
+    .min(3, "Название должно быть не менее 3 символов")
+    .max(100, "Название слишком длинное"),
+  description: z
+    .string()
+    .min(20, "Описание должно быть не менее 20 символов")
+    .max(1000, "Описание слишком длинное"),
+  shortDescription: z
+    .string()
+    .min(20, "Краткое описание должно быть не менее 20 символов")
+    .max(1000, "Краткое описание слишком длинное"),
+  targetAudience: z.string().min(3, "Укажите целевую аудиторию").max(200),
+  solution: z
+    .string()
+    .min(10, "Опишите решение (минимум 10 символов)")
+    .max(500),
+  problem: z
+    .string()
+    .min(10, "Опишите проблему (минимум 10 символов)")
+    .max(500),
+  stage_id: z
+    .number({ invalid_type_error: "Выберите стадию развития" })
+    .int()
+    .min(1, "Выберите стадию развития"),
+
+  // category_ids: z
+  //   .array(z.number().int().min(1))
+  //   .nonempty("Выберите хотя бы одну категорию"),
+});

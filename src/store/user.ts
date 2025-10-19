@@ -18,6 +18,7 @@ export interface UserState {
     getUser: () => void;
     deleteCredentials: () => void;
   };
+  error?: string;
 }
 
 export const useUserStore = create<UserState>()((set, get) => ({
@@ -64,6 +65,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
           email: "",
           avatarUrl: "",
           isAuth: false,
+          error: error?.message,
         });
       }
     },
