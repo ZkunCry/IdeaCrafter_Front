@@ -1,9 +1,10 @@
 // middleware.ts
 import { NextResponse, type NextRequest } from "next/server";
 
-const protectedRoutes = ["/account"];
+const protectedRoutes = ["/account", "/startup"];
 
 export default async function middleware(req: NextRequest) {
+  console.log("we are here");
   const accessToken = req.cookies.get("access_token")?.value;
   const refreshToken = req.cookies.get("refresh_token")?.value;
   const isProtected = protectedRoutes.some((r) =>
@@ -36,6 +37,6 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/account/:path*"],
+  matcher: ["/account/:path*", "/startup/:path*"],
   runtime: "nodejs",
 };

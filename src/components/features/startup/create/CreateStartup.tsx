@@ -48,27 +48,22 @@ import {
   MultiSelectContent,
 } from "@/src/components/ui/multi-select";
 import { Stage } from "../types";
-import { formSchema } from "./schema";
+import { formSchema, defaultValues } from "./schema";
 import { useCreateStartup } from "./useStartup";
-import axios, { Axios, type AxiosError } from "axios";
-const CreateStartup = ({ stages }: { stages: Stage[] }) => {
+import axios, { type AxiosError } from "axios";
+import { useGetStages } from "./useGetStages";
+const CreateStartup = () => {
   const { mutateAsync: createStartup, isPending } = useCreateStartup();
+  const { data: stages } = useGetStages();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      shortDescription: "",
-      // category_ids: [],
-      targetAudience: "",
-      problem: "",
-      solution: "",
-      stage_id: 0,
-    },
+    defaultValues,
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
+      console.log(values);
       const response = await createStartup(values);
       toast.success("Стартап успешно создан!");
     } catch (error: Error | AxiosError) {
@@ -225,7 +220,7 @@ const CreateStartup = ({ stages }: { stages: Stage[] }) => {
 
                   <FormField
                     control={form.control}
-                    name="shortDescription"
+                    name="short_description"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Краткое описание *</FormLabel>
@@ -295,16 +290,20 @@ const CreateStartup = ({ stages }: { stages: Stage[] }) => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {stages.map((stage) => {
-                                return (
-                                  <SelectItem
-                                    key={stage.ID}
-                                    value={String(stage.ID)}
-                                  >
-                                    {stage.name}
-                                  </SelectItem>
-                                );
-                              })}
+                              {stages === undefined ? (
+                                <SelectItem value="0">Нет стадий</SelectItem>
+                              ) : (
+                                stages.map((stage) => {
+                                  return (
+                                    <SelectItem
+                                      key={stage.ID}
+                                      value={String(stage.ID)}
+                                    >
+                                      {stage.name}
+                                    </SelectItem>
+                                  );
+                                })
+                              )}
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -315,7 +314,7 @@ const CreateStartup = ({ stages }: { stages: Stage[] }) => {
 
                   <FormField
                     control={form.control}
-                    name="targetAudience"
+                    name="target_audience"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Целевая аудитория *</FormLabel>

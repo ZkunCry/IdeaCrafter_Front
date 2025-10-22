@@ -11,6 +11,7 @@ export interface UserState {
   email: string;
   avatarUrl: string;
   isAuth: boolean;
+  isInitialized: boolean;
   actions: {
     setId: (id: string) => void;
     setIsAuth: (isAuth: boolean) => void;
@@ -27,6 +28,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
   email: "",
   avatarUrl: "",
   isAuth: false,
+  isInitialized: false,
   actions: {
     setId: (id: string) => set({ id }),
     setIsAuth: (isAuth: boolean) => set({ isAuth }),
@@ -50,13 +52,14 @@ export const useUserStore = create<UserState>()((set, get) => ({
     },
     getUser: async () => {
       const user = get();
-      if (user.id) return;
+      if (user.isInitialized) return;
       try {
         console.log("we are here");
         const response = await AuthService.identityMe();
         set({
           ...response,
           isAuth: true,
+          isInitialized: true,
         });
       } catch (error) {
         set({
@@ -65,6 +68,7 @@ export const useUserStore = create<UserState>()((set, get) => ({
           email: "",
           avatarUrl: "",
           isAuth: false,
+          isInitialized: true,
           error: error?.message,
         });
       }

@@ -8,11 +8,11 @@ export const formSchema = z.object({
     .string()
     .min(20, "Описание должно быть не менее 20 символов")
     .max(1000, "Описание слишком длинное"),
-  shortDescription: z
+  short_description: z
     .string()
-    .min(20, "Краткое описание должно быть не менее 20 символов")
+    .min(20, "Краткое описание должно быть не менее 10 символов")
     .max(1000, "Краткое описание слишком длинное"),
-  targetAudience: z.string().min(3, "Укажите целевую аудиторию").max(200),
+  target_audience: z.string().min(3, "Укажите целевую аудиторию").max(200),
   solution: z
     .string()
     .min(10, "Опишите решение (минимум 10 символов)")
@@ -30,3 +30,14 @@ export const formSchema = z.object({
   //   .array(z.number().int().min(1))
   //   .nonempty("Выберите хотя бы одну категорию"),
 });
+
+export const defaultValues = {
+  name: "",
+  description: "",
+  short_description: "",
+  // category_ids: [],
+  target_audience: "",
+  problem: "",
+  solution: "",
+  stage_id: 0,
+};

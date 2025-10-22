@@ -22,41 +22,40 @@ const HeaderMain = () => {
           <Link href={"/"}>
             <div className="flex items-center gap-[1rem]">
               <div className="logo">
-                <Rocket color="black" size={35} />
+                <Rocket className="text-primary" size={35} />
               </div>
-              <h1 className="text-[1.25rem] font-bold">IdeaCrafter</h1>
+              <h1 className="text-[1.25rem] font-bold bg-gradient-hero bg-clip-text text-transparent">
+                IdeaCrafter
+              </h1>
             </div>
           </Link>
 
           <nav className="text-[1.1rem]">
             <ul className="flex items-center gap-4">
               <li className="text-muted-foreground hover:text-primary transition-colors">
-                <Link href="#">Home</Link>
+                <Link href="/">Home</Link>
               </li>
               <li className="text-muted-foreground hover:text-primary transition-colors">
-                <Link href="#">Categories</Link>
+                <Link href="/categories">Categories</Link>
               </li>
               <li className="text-muted-foreground hover:text-primary transition-colors">
-                <Link href="#">Startups</Link>
+                <Link href="/startups">Startups</Link>
               </li>
               <li className="text-muted-foreground hover:text-primary transition-colors">
-                <Link href="#">Generate Idea</Link>
+                <Link href="/generate">Generate Idea</Link>
               </li>
             </ul>
           </nav>
-          {!user.id && !user.error ? (
-            <div className="flex items-center gap-1">
-              <Skeleton className="h-[40px] w-[40px] rounded-full" />
+          {!user.id && (!user.error || !user.isInitialized) ? (
+            <div className="flex items-center gap-1 p-[0.5rem]">
+              <Skeleton className="h-[30px] w-[30px] rounded-full" />
 
               <Skeleton className="h-[20px] w-[100px]" />
             </div>
           ) : user.isAuth ? (
             <div className="flex gap-[0.5rem]">
               <Link href={"/account"}>
-                <Button
-                  variant={"outline"}
-                  className="cursor-pointer py-[1.5rem]"
-                >
+                <div className="flex items-center gap-[0.5rem] cursor-pointer p-[0.5rem] border rounded-sm">
                   <Avatar className="h-[30px] w-[30px]">
                     <AvatarImage src="" />
                     <AvatarFallback className="text-lg">
@@ -64,7 +63,7 @@ const HeaderMain = () => {
                     </AvatarFallback>
                   </Avatar>
                   {user.username}
-                </Button>
+                </div>
               </Link>
             </div>
           ) : (
