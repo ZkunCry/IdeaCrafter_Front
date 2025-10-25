@@ -33,6 +33,7 @@ export interface Startup {
   stage: Stage;
   categories?: Category[];
   vacancies: Vacancy[];
+  creator: User;
 }
 
 export type CreateStartup = {

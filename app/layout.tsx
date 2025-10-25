@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${roboto.variable} antialiased `}>
-        <div className="relative overflow-y-auto overflow-x-hidden min-h-screen flex flex-col items-center">
+        <div className="relative  min-h-screen flex flex-col items-center">
           <Providers>
             {children}
             <Toaster position="bottom-right" />
