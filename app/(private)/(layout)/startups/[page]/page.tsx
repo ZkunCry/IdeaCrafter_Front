@@ -1,18 +1,27 @@
-import StartupList from "@/src/components/features/startup/review/StartupList";
 import Section from "@/src/components/ui/section";
-import { axiosInstance } from "@/src/api/axios";
-import { type StartupResponse } from "@/src/components/features/startup/types";
 import Container from "@/src/components/common/container/Container";
+import StartupList from "@/src/components/features/startup/review/StartupList";
 import Filters from "@/src/components/features/startup/review/Filters";
 import { getQueryClient } from "@/src/providers/get-query-client";
-import { StartupPagination } from "@/src/components/features/startup/review/StartupPagination";
 import { StartupService } from "@/src/components/features/startup/api_service/startupService";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-export default async function StartupsPage() {
+export const revalidate = 60;
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ page: string }>;
+  searchParams: Promise<{ query?: string; category?: string }>;
+}) {
+  const res = await params;
+  const paramsS = await searchParams;
+
+  const offsetChange = +res.page != 0 ? +res.page - 1 : +res.page;
+  console.log(offsetChange);
   const queryClient = getQueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ["startups", 0, 10],
-    queryFn: () => StartupService.getStartups(0, 10),
+    queryKey: ["startups", offsetChange, 10],
+    queryFn: () => StartupService.getStartups(offsetChange, 10),
   });
 
   return (
@@ -29,8 +38,8 @@ export default async function StartupsPage() {
       <Section>
         <Container>
           <HydrationBoundary state={dehydrate(queryClient)}>
-            <div className="flex items-start justify-between gap-6">
-              <StartupList offset={0} limit={10} />
+            <div className="flex items-start gap-6">
+              <StartupList offset={+res.page} limit={10} />
               <Filters />
             </div>
           </HydrationBoundary>

@@ -45,3 +45,7 @@ export type CreateStartup = {
   solution: string;
   stage_id: number;
 };
+export type StartupResponse = {
+  startups: Startup[];
+  total_count: number;
+};

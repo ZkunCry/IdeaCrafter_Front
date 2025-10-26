@@ -13,21 +13,22 @@ import {
   CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
-import StartupImage from "@/src/assets/startup.jpg";
 
 import HeaderMain from "@/src/components/widgets/header/HeaderMain";
-import { Startup } from "@/src/components/features/startup/types";
+import {
+  Startup,
+  type StartupResponse,
+} from "@/src/components/features/startup/types";
 import { axiosInstance } from "@/src/api/axios";
 import StartupCard from "@/src/components/features/startup/create/StartupCard";
 import HeroBackground from "@/src/components/common/background/HeroBackground";
 import Footer from "@/src/components/common/footer/Footer";
 
 export default async function Home() {
-  const startups = (
-    await axiosInstance.get<Startup[]>("/startup/list?offset=0&limit=10")
+  const response = (
+    await axiosInstance.get<StartupResponse>("/startup/list?offset=0&limit=10")
   ).data;
-  console.log(startups);
+
   return (
     <div className="w-full flex flex-col">
       <HeaderMain />
@@ -169,7 +170,7 @@ export default async function Home() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {startups.map((startup) => (
+                    {response.startups.map((startup) => (
                       <StartupCard startup={startup} key={startup.id} />
                     ))}
                   </div>

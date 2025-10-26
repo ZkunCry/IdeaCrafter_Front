@@ -21,15 +21,11 @@ export function StartupPagination({ currentPage, totalPages }: Props) {
   const searchParams = useSearchParams();
 
   const createPageLink = (page: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    return `${pathname.replace(
-      /\/page\/\d+$/,
-      ""
-    )}/page/${page}?${params.toString()}`;
+    const basePath = pathname.replace(/\/$/, "").replace(/\/\d+$/, "");
+    const params = searchParams?.toString();
+    return params ? `${basePath}/${page}?${params}` : `${basePath}/${page}`;
   };
-
   const visiblePages = getVisiblePages(currentPage, totalPages);
-
   return (
     <Pagination className="mt-8">
       <PaginationContent>
@@ -39,7 +35,6 @@ export function StartupPagination({ currentPage, totalPages }: Props) {
           </PaginationItem>
         )}
 
-        {/* Номера страниц */}
         {visiblePages.map((page, idx) =>
           page === "..." ? (
             <PaginationItem key={`ellipsis-${idx}`}>
@@ -57,7 +52,6 @@ export function StartupPagination({ currentPage, totalPages }: Props) {
           )
         )}
 
-        {/* Кнопка "Вперёд" */}
         {currentPage < totalPages && (
           <PaginationItem>
             <PaginationNext href={createPageLink(currentPage + 1)} />
