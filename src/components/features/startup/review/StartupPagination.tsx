@@ -21,9 +21,15 @@ export function StartupPagination({ currentPage, totalPages }: Props) {
   const searchParams = useSearchParams();
 
   const createPageLink = (page: number) => {
-    const basePath = pathname.replace(/\/$/, "").replace(/\/\d+$/, "");
-    const params = searchParams?.toString();
-    return params ? `${basePath}/${page}?${params}` : `${basePath}/${page}`;
+    const basePath = pathname.replace(/\/$/, "");
+
+    const newParams = new URLSearchParams(searchParams?.toString() || "");
+
+    newParams.set("page", String(page));
+
+    const queryString = newParams.toString();
+
+    return `${basePath}?${queryString}`;
   };
   const visiblePages = getVisiblePages(currentPage, totalPages);
   return (
@@ -44,7 +50,7 @@ export function StartupPagination({ currentPage, totalPages }: Props) {
             <PaginationItem key={page}>
               <PaginationLink
                 href={createPageLink(page as number)}
-                isActive={page === currentPage}
+                isActive={page === currentPage + 1}
               >
                 {page}
               </PaginationLink>

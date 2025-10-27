@@ -23,7 +23,8 @@ export const StartupService = {
   async getStartups(offset: number, limit: number): Promise<StartupResponse> {
     console.log(offset, limit);
     const response = await fetch(
-      `${API.BASE_URL}/startup/list?offset=${offset}&limit=${limit}`
+      `${API.BASE_URL}/startup/list?offset=${offset}&limit=${limit}`,
+      { next: { revalidate: 60 } }
     );
     const data: StartupResponse = await response.json();
     return data;

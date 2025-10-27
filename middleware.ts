@@ -37,6 +37,6 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/account/:path*", "/startup/:path*"],
+  matcher: ["/account/:path*", "/startup/create"],
   runtime: "nodejs",
 };

@@ -12,23 +12,24 @@ import { Users } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
 import { Heart } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { StartupService } from "../api_service/startupService";
 import { StartupPagination } from "./StartupPagination";
-const StartupList = ({ offset, limit }: { offset: number; limit: number }) => {
-  console.log(offset, limit);
-  const offsetChange = offset != 0 ? offset - 1 : offset;
-  console.log(offsetChange);
-  const { data: initialData, isLoading } = useQuery({
-    queryKey: ["startups", offsetChange, limit],
-    queryFn: () => StartupService.getStartups(offsetChange, limit),
-    initialData: { startups: [], total_count: 0 },
-  });
+import type { StartupResponse } from "../types";
+const StartupList = ({ data }: { data: StartupResponse }) => {
+  // console.log(`ON STARTUP OFFSET = ${offset}`);
+  // // const offsetChange = offset != 0 ? offset - 1 : offset;
+  // const { data: initialData, isLoading } = useQuery({
+  //   queryKey: ["startups", offset, limit],
+  //   queryFn: () => StartupService.getStartups(offset, limit),
+  //   initialData: { startups: [], total_count: 0 },
+  //   placeholderData: keepPreviousData,
+  // });
 
   return (
     <div className="flex flex-col flex-1 h-full">
       <div className="w-full grid grid-cols-1 md:grid-cols-2  gap-6 flex-1 content-baseline">
-        {initialData.startups.map((startup, index) => (
+        {data.startups.map((startup, index) => (
           <Card
             key={startup.id}
             className="hover-scale cursor-pointer transition-all duration-300 hover:shadow-lg group animate-fade-in"
@@ -86,10 +87,6 @@ const StartupList = ({ offset, limit }: { offset: number; limit: number }) => {
           </Card>
         ))}
       </div>
-      <StartupPagination
-        totalPages={initialData.total_count}
-        currentPage={offset}
-      />
     </div>
   );
 };

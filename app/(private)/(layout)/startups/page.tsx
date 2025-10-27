@@ -1,23 +1,24 @@
-import StartupList from "@/src/components/features/startup/review/StartupList";
 import Section from "@/src/components/ui/section";
-import { axiosInstance } from "@/src/api/axios";
-import { type StartupResponse } from "@/src/components/features/startup/types";
 import Container from "@/src/components/common/container/Container";
+import StartupList from "@/src/components/features/startup/review/StartupList";
 import Filters from "@/src/components/features/startup/review/Filters";
-import { getQueryClient } from "@/src/providers/get-query-client";
-import { StartupPagination } from "@/src/components/features/startup/review/StartupPagination";
 import { StartupService } from "@/src/components/features/startup/api_service/startupService";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-export default async function StartupsPage() {
-  const queryClient = getQueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: ["startups", 0, 10],
-    queryFn: () => StartupService.getStartups(0, 10),
-  });
-
+import { StartupPagination } from "@/src/components/features/startup/review/StartupPagination";
+import { Suspense } from "react";
+import { LoaderCircle } from "lucide-react";
+export const revalidate = 60;
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ query?: string; category?: string; page?: string }>;
+}) {
+  const paramsS = await searchParams;
+  const currentPage = Number(paramsS.page) || 1;
+  const offset = currentPage > 0 ? currentPage - 1 : 0;
+  const response = await StartupService.getStartups(offset, 10);
   return (
     <>
-      <Section className="text-center space-y-4 animate-fade-in mb-4">
+      <Section className="text-center space-y-4 animate-fade-in py-[8rem]">
         <Container>
           <h1 className="text-4xl font-bold text-foreground">Стартапы</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -28,12 +29,21 @@ export default async function StartupsPage() {
       </Section>
       <Section>
         <Container>
-          <HydrationBoundary state={dehydrate(queryClient)}>
-            <div className="flex items-start justify-between gap-6">
-              <StartupList offset={0} limit={10} />
+          <div className="flex items-start gap-6">
+            <Suspense
+              fallback={
+                <LoaderCircle size={40} className="animate-spin w-full" />
+              }
+            >
+              <StartupList data={response} />
               <Filters />
-            </div>
-          </HydrationBoundary>
+            </Suspense>
+          </div>
+
+          <StartupPagination
+            currentPage={offset}
+            totalPages={response.total_count}
+          />
         </Container>
       </Section>
     </>
