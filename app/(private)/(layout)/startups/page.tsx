@@ -13,6 +13,7 @@ export default async function Page({
   searchParams: Promise<{ query?: string; category?: string; page?: string }>;
 }) {
   const paramsS = await searchParams;
+  console.log(paramsS);
   const currentPage = Number(paramsS.page) || 1;
   const offset = currentPage > 0 ? currentPage - 1 : 0;
   const response = await StartupService.getStartups(offset, 10);

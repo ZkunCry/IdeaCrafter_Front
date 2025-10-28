@@ -14,6 +14,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const categories = [
   {
@@ -62,7 +64,21 @@ const categories = [
 
 const Filters = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+  const handleSearch = useDebouncedCallback((term) => {
+    console.log(`Searching... ${term}`);
+
+    const params = new URLSearchParams(searchParams);
+    if (term) {
+      params.set("query", term);
+    } else {
+      params.delete("query");
+    }
+    replace(`${pathname}?${params.toString()}`);
+  }, 300);
 
   return (
     <aside className="w-full lg:w-80 bg-card border border-border rounded-lg p-6 h-fit sticky top-24">
@@ -71,31 +87,31 @@ const Filters = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Search startup ideas..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
             className="pl-10"
+            defaultValue={searchParams.get("query")?.toString()}
           />
         </div>
       </div>
 
       <div className="mb-6">
         <h3 className="text-sm font-semibold text-foreground mb-3">
-          Quick Actions
+          Быстрые действия
         </h3>
         <div className="space-y-2">
           <Button variant="default" className="w-full justify-start" size="sm">
             <Sparkles className="w-4 h-4 mr-2" />
-            Generate AI Idea
+            Сгенерировать идею
           </Button>
           <Button variant="outline" className="w-full justify-start" size="sm">
-            Create startup
+            Создать стартап
           </Button>
         </div>
       </div>
 
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-foreground">Categories</h3>
+          <h3 className="text-sm font-semibold text-foreground">Категории</h3>
           {selectedCategory && (
             <Button
               variant="ghost"
