@@ -20,13 +20,20 @@ export const StartupService = {
     const response = await axiosInstance.post<Startup>("/startup", data);
     return response.data;
   },
-  async getStartups(offset: number, limit: number): Promise<StartupResponse> {
-    console.log(offset, limit);
-    const response = await fetch(
-      `${API.BASE_URL}/startup/list?offset=${offset}&limit=${limit}`,
-      { next: { revalidate: 60 } }
-    );
+  async getStartups(
+    offset: number,
+    limit: number,
+    query?: string
+  ): Promise<StartupResponse> {
+    console.log(offset, limit, query);
+    const params = `?offset=${offset}&limit=${limit}${
+      query ? `&searchString=${query}` : ""
+    }`;
+    const response = await fetch(`${API.BASE_URL}/startup/list${params}`, {
+      next: { revalidate: 60 },
+    });
     const data: StartupResponse = await response.json();
+    console.log(data);
     return data;
   },
 };

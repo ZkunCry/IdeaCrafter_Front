@@ -41,7 +41,6 @@ const StartupCard = ({ startup }: { startup: Startup }) => {
       <CardContent>
         <CardTitle>
           <h3 className="font-semibold tracking-tight text-lg leading-tight group-hover:text-blue-600 transition-colors">
-            EcoTrack - carbon Footpring Tracker
             {startup.name}
           </h3>{" "}
         </CardTitle>

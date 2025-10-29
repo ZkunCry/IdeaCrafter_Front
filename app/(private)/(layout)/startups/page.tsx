@@ -16,7 +16,7 @@ export default async function Page({
   console.log(paramsS);
   const currentPage = Number(paramsS.page) || 1;
   const offset = currentPage > 0 ? currentPage - 1 : 0;
-  const response = await StartupService.getStartups(offset, 10);
+  const response = await StartupService.getStartups(offset, 10, paramsS.query);
   return (
     <>
       <Section className="text-center space-y-4 animate-fade-in py-[8rem]">
