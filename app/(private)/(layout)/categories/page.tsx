@@ -12,7 +12,7 @@ import { Code, Webhook } from "lucide-react";
 export default function CategoriesPage() {
   return (
     <>
-      <Section className="py-[4rem]">
+      <Section>
         <Container>
           <div className="flex flex-col items-center text-center gap-[1rem]">
             <h1 className="text-4xl sm:text-5xl font-bold  text-primary animate-fade-in">

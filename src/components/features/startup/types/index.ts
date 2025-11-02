@@ -34,6 +34,7 @@ export interface Startup {
   categories?: Category[];
   vacancies: Vacancy[];
   creator: User;
+  CreatedAt: string;
 }
 
 export type CreateStartup = {

@@ -20,6 +20,15 @@ export const StartupService = {
     const response = await axiosInstance.post<Startup>("/startup", data);
     return response.data;
   },
+  async getStartupById(
+    id: string
+  ): Promise<{ data?: Startup; error?: string }> {
+    const response = await fetch(`${API.BASE_URL}/startup/${id}`);
+    const data = await response.json();
+
+    if (data.error) return { error: data.error };
+    return { data };
+  },
   async getStartups(
     offset: number,
     limit: number,
