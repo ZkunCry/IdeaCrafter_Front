@@ -38,6 +38,7 @@ export const StartupService = {
     const params = `?offset=${offset}&limit=${limit}${
       query ? `&searchString=${query}` : ""
     }`;
+    console.log(params);
     const response = await fetch(`${API.BASE_URL}/startup/list${params}`, {
       next: { revalidate: 60 },
     });

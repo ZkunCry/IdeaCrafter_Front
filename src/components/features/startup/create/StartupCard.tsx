@@ -70,7 +70,7 @@ const StartupCard = ({ startup }: { startup: Startup }) => {
         </div>
       </CardFooter>
       <Link
-        href={`/startup/${startup.id}-${startup.name}`}
+        href={`/startup/${startup.id}`}
         className="absolute inset-0 w-full z-[5]"
       />
     </Card>

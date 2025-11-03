@@ -47,6 +47,6 @@ export type CreateStartup = {
   stage_id: number;
 };
 export type StartupResponse = {
-  startups: Startup[];
+  items: Startup[];
   total_count: number;
 };

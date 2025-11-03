@@ -7,7 +7,6 @@ import {
   Rocket,
   Sparkles,
   Users,
-  TrendingUp,
   Lightbulb,
   Target,
   CheckCircle,
@@ -55,7 +54,7 @@ export default async function Home() {
                     создайте свой
                     <span className="bg-gradient-hero bg-clip-text text-transparent">
                       {" "}
-                      следующий стартап{" "}
+                      стартап{" "}
                     </span>
                   </h1>
                   <p className="text-xl text-foreground/70 max-w-3xl mx-auto mb-12 leading-relaxed animate-fade-in-delay">
@@ -170,7 +169,7 @@ export default async function Home() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {response.startups.map((startup) => (
+                    {response.items.map((startup) => (
                       <StartupCard startup={startup} key={startup.id} />
                     ))}
                   </div>
