@@ -6,32 +6,37 @@ async function provider(
   req: NextRequest,
   ctx: { params: { proxy: string[] } }
 ) {
-  const params = await ctx.params;
+  const params = ctx.params;
   let url = `${apiServer}${params.proxy.join("/")}`;
-  let body;
+
   const search = req.nextUrl.searchParams.toString();
-  console.log("@url", url);
   if (search) {
     url += `?${search}`;
   }
-  const headers = new Headers();
-  req.headers.forEach((v, k) => {
-    headers.append(k, v);
-  });
 
-  try {
-    body = await req.json();
-  } catch {
-    body = undefined;
+  const headers = new Headers();
+  req.headers.forEach((value, key) => headers.append(key, value));
+
+  let body: BodyInit | undefined = undefined;
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    body = await req.arrayBuffer();
   }
 
   const res = await fetch(url, {
     method: req.method,
     headers,
-    ...(body && { body: JSON.stringify(body) }),
+    body,
   });
-  console.log("@", res);
-  return res;
+
+  // Пробрасываем ответ от backend без изменений
+  const responseBody = await res.arrayBuffer();
+  const responseHeaders = new Headers(res.headers);
+
+  return new Response(responseBody, {
+    status: res.status,
+    statusText: res.statusText,
+    headers: responseHeaders,
+  });
 }
 
 export {

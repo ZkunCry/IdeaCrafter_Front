@@ -33,10 +33,10 @@ const HeaderMain = () => {
           <nav className="text-[1.1rem]">
             <ul className="flex items-center gap-4">
               <li className="text-muted-foreground hover:text-primary transition-colors">
-                <Link href="/">Home</Link>
+                <Link href="/">Главная</Link>
               </li>
               <li className="text-muted-foreground hover:text-primary transition-colors">
-                <Link href="/categories">Categories</Link>
+                <Link href="/categories">Категории</Link>
               </li>
               <li className="text-muted-foreground hover:text-primary transition-colors">
                 <Link href="/startups">Startups</Link>

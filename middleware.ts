@@ -12,7 +12,7 @@ export default async function middleware(req: NextRequest) {
   );
 
   if (!isProtected) return NextResponse.next();
-
+  console.log(isProtected);
   if (!accessToken && !refreshToken) {
     const url = new URL("/auth/signin", req.url);
     url.searchParams.set("reason", "session_expired");

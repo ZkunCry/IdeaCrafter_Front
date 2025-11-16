@@ -25,7 +25,7 @@ export const formSchema = z.object({
     .number({ invalid_type_error: "Выберите стадию развития" })
     .int()
     .min(1, "Выберите стадию развития"),
-
+  files: z.file().nullable(),
   // category_ids: z
   //   .array(z.number().int().min(1))
   //   .nonempty("Выберите хотя бы одну категорию"),
@@ -40,4 +40,5 @@ export const defaultValues = {
   problem: "",
   solution: "",
   stage_id: 0,
+  files: null,
 };

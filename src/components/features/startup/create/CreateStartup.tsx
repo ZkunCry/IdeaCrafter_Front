@@ -52,6 +52,8 @@ import { formSchema, defaultValues } from "./schema";
 import { useCreateStartup } from "./useStartup";
 import axios, { type AxiosError } from "axios";
 import { useGetStages } from "./useGetStages";
+import { FileUploader } from "@/src/components/widgets/fileUploader/FileUploader";
+import { revalidatePath } from "next/cache";
 const CreateStartup = () => {
   const { mutateAsync: createStartup, isPending } = useCreateStartup();
   const { data: stages } = useGetStages();
@@ -62,10 +64,12 @@ const CreateStartup = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log(values);
     try {
       console.log(values);
       const response = await createStartup(values);
       toast.success("Стартап успешно создан!");
+      revalidatePath("/startups");
     } catch (error: Error | AxiosError) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data.message);
@@ -196,6 +200,9 @@ const CreateStartup = () => {
                     )}
                   />
 
+                  <FileUploader
+                    onFileSelect={(file) => form.setValue("files", file)}
+                  />
                   <FormField
                     control={form.control}
                     name="description"

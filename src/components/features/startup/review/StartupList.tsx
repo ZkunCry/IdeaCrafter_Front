@@ -14,6 +14,7 @@ import { Heart } from "lucide-react";
 
 import type { StartupResponse } from "../types";
 import Link from "next/link";
+import Image from "next/image";
 const StartupList = ({ data }: { data: StartupResponse }) => {
   console.log(data);
   return (
@@ -22,13 +23,29 @@ const StartupList = ({ data }: { data: StartupResponse }) => {
         {data.items.map((startup, index) => (
           <Card
             key={startup.id}
-            className="relative hover-scale cursor-pointer transition-all duration-300 hover:shadow-lg group animate-fade-in"
+            className="relative hover-scale cursor-pointer transition-all duration-300 hover:shadow-lg group animate-fade-in pt-0"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <Link
               className="absolute inset-0 w-full h-full z-[5]"
               href={`/startup/${startup.id}`}
             />
+
+            <div className="relative h-48 w-full">
+              <Image
+                className="w-full h-full object-cover rounded-t-lg"
+                src={
+                  startup.logo_url ||
+                  `https://via.assets.so/img.jpg?w=592&h=592&gradientFrom=667eea&gradientTo=764ba2&gradientAngle=135&fontSize=50&text=${startup.name}`
+                }
+                alt={startup.name}
+                fill
+              />
+
+              <Badge className="absolute top-5 right-5" variant={"secondary"}>
+                {startup.stage.name}
+              </Badge>
+            </div>
             <CardHeader>
               <div className="flex items-start justify-between relative">
                 <div className="space-y-2">
@@ -36,9 +53,7 @@ const StartupList = ({ data }: { data: StartupResponse }) => {
                     {startup.name}
                   </CardTitle>
                 </div>
-                <div className=" flex space-x-2">
-                  <Badge variant={"secondary"}>{startup.stage.name}</Badge>
-                </div>
+                <div className=" flex space-x-2"></div>
               </div>
               <CardDescription className="line-clamp-3">
                 {startup.description}

@@ -16,7 +16,7 @@ export const StartupService = {
     const response = await axiosInstance.get<Category[]>("/category");
     return response.data;
   },
-  async createStartup(data: CreateStartup): Promise<Startup> {
+  async createStartup(data: FormData): Promise<Startup> {
     const response = await axiosInstance.post<Startup>("/startup", data);
     return response.data;
   },
@@ -40,7 +40,7 @@ export const StartupService = {
     }`;
     console.log(params);
     const response = await fetch(`${API.BASE_URL}/startup/list${params}`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: ["startups"] },
     });
     const data: StartupResponse = await response.json();
     console.log(data);

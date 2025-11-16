@@ -35,6 +35,7 @@ export interface Startup {
   vacancies: Vacancy[];
   creator: User;
   CreatedAt: string;
+  LogoURL: string;
 }
 
 export type CreateStartup = {
@@ -45,6 +46,7 @@ export type CreateStartup = {
   problem: string;
   solution: string;
   stage_id: number;
+  file: File | null;
 };
 export type StartupResponse = {
   items: Startup[];

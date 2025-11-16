@@ -8,6 +8,7 @@ import { Button } from "@/src/components/ui/button";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
+import Image from "next/image";
 export default async function StartupPage({
   params,
 }: {
@@ -20,19 +21,34 @@ export default async function StartupPage({
   return (
     <Section>
       <Container>
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-4">
-            <Badge className="text-sm" variant={"secondary"}>
-              {startup?.stage.name}
-            </Badge>
-            <h1 className="text-4xl font-bold text-foreground">
-              {startup?.name}
-            </h1>
-            <p className="text-xl text-muted-foreground">
-              {startup?.short_description}
-            </p>
+        <div className="max-w-5xl mx-auto flex flex-col gap-6">
+          <div className="flex items-start gap-6 mb-8  ">
+            <div className="min-w-[124px] min-h-[124px] md:min-w-[200px] md:min-h-[200px] rounded-2xl overflow-hidden border-2 border-border shadow-xl bg-card">
+              {startup?.LogoURL && (
+                <Image
+                  className="w-full h-full object-cover aspect-square"
+                  src={startup.LogoURL}
+                  alt="Logo"
+                  width={128}
+                  height={128}
+                />
+              )}
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <Badge className="text-sm" variant={"secondary"}>
+                {startup?.stage.name}
+              </Badge>
+              <h1 className="text-4xl font-bold text-foreground">
+                {startup?.name}
+              </h1>
+              <p className="text-xl text-muted-foreground">
+                {startup?.short_description}
+              </p>
+            </div>
           </div>
-          <div className="flex justify-between items-center border-b pb-[2rem]">
+
+          <div className="flex justify-between items-center border-b pb-[2rem] ">
             <div className="flex items-center gap-6 text-sm text-muted-foreground ">
               <div className="flex items-center gap-2">
                 <Heart size={18} />
@@ -58,73 +74,76 @@ export default async function StartupPage({
             </div>
           </div>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8  mt-[2rem]">
-          <div className="flex flex-col gap-8 max-w-fit">
-            <Card>
-              <CardContent className="pt-6">
-                <h2 className="text-2xl font-semibold mb-4">Проблема</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  {startup.problem}
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <h2 className="text-2xl font-semibold mb-4">Решение</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  {startup?.solution}
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <h2 className="text-2xl font-semibold mb-4">
-                  Об этом стартапе
-                </h2>
-                {startup?.description.split("\n\n").map((paragraph, index) => (
-                  <p
-                    key={index}
-                    className="text-muted-foreground mb-4 leading-relaxed"
-                  >
-                    {paragraph}
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 mt-[2rem]">
+            <div className="flex flex-col gap-8 max-w-fit">
+              <Card>
+                <CardContent className="pt-6">
+                  <h2 className="text-2xl font-semibold mb-4">Проблема</h2>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {startup.problem}
                   </p>
-                ))}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <h2 className="text-2xl font-semibold mb-4">
-                  Целевая аудитория
-                </h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  {startup?.target_audience}
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-          <div>
-            <Card>
-              <CardContent>
-                <h3 className="text-2xl font-semibold mb-4">Создатель</h3>
-                <div className="flex items-center gap-3 mb-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>
-                      {startup?.creator.username.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium text-foreground">
-                      {startup.creator.username}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {startup.creator.email}
-                    </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <h2 className="text-2xl font-semibold mb-4">Решение</h2>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {startup?.solution}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <h2 className="text-2xl font-semibold mb-4">
+                    Об этом стартапе
+                  </h2>
+                  {startup?.description
+                    .split("\n\n")
+                    .map((paragraph, index) => (
+                      <p
+                        key={index}
+                        className="text-muted-foreground mb-4 leading-relaxed"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <h2 className="text-2xl font-semibold mb-4">
+                    Целевая аудитория
+                  </h2>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {startup?.target_audience}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+            <div>
+              <Card>
+                <CardContent>
+                  <h3 className="text-2xl font-semibold mb-4">Создатель</h3>
+                  <div className="flex items-center gap-3 mb-4">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarFallback>
+                        {startup?.creator.username.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium text-foreground">
+                        {startup.creator.username}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {startup.creator.email}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </Container>

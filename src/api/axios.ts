@@ -5,15 +5,13 @@ import { useUserStore } from "../store/user";
 import { toast } from "sonner";
 export const axiosInstance = axios.create({
   baseURL: API.BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 
   withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(async (config) => {
   const isSSR = typeof window === "undefined";
+  console.log(config.headers);
 
   if (isSSR) {
     const { cookies } = await import("next/headers");
@@ -25,11 +23,12 @@ axiosInstance.interceptors.request.use(async (config) => {
     const cookieParts: string[] = [];
     if (accessToken) cookieParts.push(`access_token=${accessToken.value}`);
     if (refreshToken) cookieParts.push(`refresh_token=${refreshToken.value}`);
-
-    if (cookieParts.length > 0) {
-      if (!config.headers) config.headers = {};
-      config.headers["cookie"] = cookieParts.join("; ");
-    }
+    // if (cookieParts.length > 0) {
+    //   config.headers = {
+    //     ...(config.headers || {}),
+    //     cookie: cookieParts.join("; "),
+    //   };
+    // }
   }
 
   return config;
