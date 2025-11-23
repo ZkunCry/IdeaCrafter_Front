@@ -45,7 +45,7 @@ export default async function Home() {
                 >
                   <Sparkles className="text-primary" size={30} />
                   <h1 className="text-[0.8rem] text-primary ">
-                    Welcome to IdeaCrafter
+                    Добро пожаловать в IdeaCrafter
                   </h1>
                 </Badge>
                 <div className="flex flex-col items-center gap-[0.8rem] text-center">

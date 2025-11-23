@@ -10,7 +10,7 @@ export const useCreateStartup = () => {
         if (key === "files" && value instanceof File) {
           formData.append(key, value);
         } else if (Array.isArray(value)) {
-          value.forEach((v) => formData.append(`${key}[]`, String(v)));
+          formData.append(key, value.join(","));
         } else {
           formData.append(key, String(value));
         }

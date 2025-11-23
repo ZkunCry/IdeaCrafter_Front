@@ -3,14 +3,23 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import Header from "@/src/components/common/header/Header";
 import Container from "@/src/components/common/container/Container";
-import { Rocket } from "lucide-react";
+import { Rocket, Settings, LogOut, User } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { useGetUser, useUser } from "@/src/store/user";
 import { Skeleton } from "../../ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "../../ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@/src/components/ui/dropdown-menu";
 const HeaderMain = () => {
   const getUser = useGetUser();
   const user = useUser();
+
   console.log(user);
   useEffect(() => {
     getUser();
@@ -39,10 +48,10 @@ const HeaderMain = () => {
                 <Link href="/categories">Категории</Link>
               </li>
               <li className="text-muted-foreground hover:text-primary transition-colors">
-                <Link href="/startups">Startups</Link>
+                <Link href="/startups">Стартапы</Link>
               </li>
               <li className="text-muted-foreground hover:text-primary transition-colors">
-                <Link href="/generate">Generate Idea</Link>
+                <Link href="/generate">Сгенерировать идею</Link>
               </li>
             </ul>
           </nav>
@@ -54,28 +63,68 @@ const HeaderMain = () => {
             </div>
           ) : user.isAuth ? (
             <div className="flex gap-[0.5rem]">
-              <Link href={"/account"}>
-                <div className="flex items-center gap-[0.5rem] cursor-pointer p-[0.5rem] border rounded-sm">
-                  <Avatar className="h-[30px] w-[30px]">
-                    <AvatarImage src="" />
-                    <AvatarFallback className="text-lg">
-                      {user.username.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  {user.username}
-                </div>
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="cursor-pointer flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-all duration-200 group">
+                    <Avatar className="h-9 w-9  bg-primary group-hover:ring-primary/40 transition-all">
+                      <AvatarImage src={user.avatarUrl} alt={user.username} />
+                      <AvatarFallback className="bg-gradient-to-br from-primary to-primary-hover text-primary-foreground font-semibold">
+                        {user.username
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="text-left hidden lg:block">
+                      <p className="text-sm font-semibold text-foreground">
+                        {user.username}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium">{user.username}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <a href="/account" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Аккаунт</span>
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <a href="/account" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Настройки</span>
+                    </a>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600">
+                    <LogOut className="mr-2 h-4 w-4" color="red" />
+                    <span>Выход из аккаунта</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ) : (
             <div className="flex gap-[0.5rem]">
               <Link href={"/auth/signin"}>
                 <Button className="cursor-pointer" variant={"outline"}>
-                  Login
+                  Войти
                 </Button>
               </Link>
 
               <Link href={"/auth/signup"}>
-                <Button className="cursor-pointer">Register</Button>
+                <Button className="cursor-pointer">Зарегистрироваться</Button>
               </Link>
             </div>
           )}

@@ -14,23 +14,23 @@ const ChangePassword = () => {
   return (
     <Card className="max-w-[850px] hover-scale">
       <CardHeader>
-        <CardTitle>Change Password</CardTitle>
-        <CardDescription>Update your account security</CardDescription>
+        <CardTitle>Изменение пароля</CardTitle>
+        <CardDescription>Обновить пароль</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <Label htmlFor="current-password">Current Password</Label>
+          <Label htmlFor="current-password">Текущий пароль</Label>
           <Input id="current-password" type="password" className="mt-1" />
         </div>
         <div>
-          <Label htmlFor="new-password">New Password</Label>
+          <Label htmlFor="new-password">Новый пароль</Label>
           <Input id="new-password" type="password" className="mt-1" />
         </div>
         <div>
-          <Label htmlFor="confirm-password">Confirm New Password</Label>
+          <Label htmlFor="confirm-password">Подтвердите пароль</Label>
           <Input id="confirm-password" type="password" className="mt-1" />
         </div>
-        <Button className="w-full hover-scale">Change Password</Button>
+        <Button className="w-full hover-scale">Изменить пароль</Button>
       </CardContent>
     </Card>
   );

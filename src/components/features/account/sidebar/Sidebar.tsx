@@ -16,13 +16,13 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import { Bookmark, FolderOpen, User, Users } from "lucide-react";
 const sidebarItems = [
-  { title: "Profile", url: "/account", icon: User },
-  { title: "My Startups", url: "/account/startups", icon: FolderOpen },
-  { title: "Favorites", url: "/account/favorites", icon: Bookmark },
+  { title: "Аккаунт", url: "/account", icon: User },
+  { title: "Мои стартапы", url: "/account/startups", icon: FolderOpen },
+  { title: "Избранные", url: "/account/favorites", icon: Bookmark },
 ];
 
 const membershipsItems = [
-  { title: "Memberships", url: "/account/memberships", icon: Users },
+  { title: "Участники", url: "/account/memberships", icon: Users },
 ];
 
 const SidebarAccount = () => {
@@ -35,7 +35,7 @@ const SidebarAccount = () => {
       <Sidebar className="">
         <SidebarContent className=" overflow-y-auto pt-[5.2rem]">
           <SidebarGroup>
-            <SidebarGroupLabel className="text-lg">Account</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-lg">Аккаунт</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {sidebarItems.map((item) => (
@@ -60,9 +60,7 @@ const SidebarAccount = () => {
           </SidebarGroup>
 
           <SidebarGroup className="mt-4">
-            <SidebarGroupLabel className="text-lg">
-              Memberships
-            </SidebarGroupLabel>
+            <SidebarGroupLabel className="text-lg">Участники</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {membershipsItems.map((item) => (

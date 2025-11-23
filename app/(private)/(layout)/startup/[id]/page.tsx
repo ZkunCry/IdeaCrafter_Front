@@ -2,13 +2,37 @@ import Container from "@/src/components/common/container/Container";
 import Section from "@/src/components/ui/section";
 import { StartupService } from "@/src/components/features/startup/api_service/startupService";
 import { Badge } from "@/src/components/ui/badge";
-import { Calendar, Heart, Share2, Users } from "lucide-react";
+import {
+  Calendar,
+  Heart,
+  Share2,
+  Users,
+  Tag,
+  ExternalLink,
+  Mail,
+  AlertCircle,
+  Home,
+  Search,
+  Target,
+  Lightbulb,
+  CheckCircle,
+  Eye,
+  FileText,
+  Briefcase,
+  Rocket,
+} from "lucide-react";
 import { formatDate } from "@/src/lib/date";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/src/components/ui/accordion";
 export default async function StartupPage({
   params,
 }: {
@@ -17,7 +41,7 @@ export default async function StartupPage({
   const id = await params.id;
   const { data: startup, error } = await StartupService.getStartupById(id);
   if (error) return error;
-  console.log(startup);
+  console.log(startup.categories.length);
   return (
     <Section>
       <Container>
@@ -76,50 +100,129 @@ export default async function StartupPage({
         </div>
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8 mt-[2rem]">
-            <div className="flex flex-col gap-8 max-w-fit">
-              <Card>
-                <CardContent className="pt-6">
-                  <h2 className="text-2xl font-semibold mb-4">Проблема</h2>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {startup.problem}
-                  </p>
+            <div className="flex flex-col gap-8">
+              <Card className="border-2 hover:shadow-xl transition-shadow duration-300 backdrop-blur-sm bg-card/50">
+                <CardContent className="p-6">
+                  <Accordion
+                    type="single"
+                    collapsible
+                    className="w-full"
+                    defaultValue="problem"
+                  >
+                    <AccordionItem
+                      value="problem"
+                      className="border-b border-border"
+                    >
+                      <AccordionTrigger className="hover:no-underline group">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-gradient-to-br from-red-500/10 to-orange-500/10 group-hover:from-red-500/20 group-hover:to-orange-500/20 transition-colors">
+                            <Target className="h-5 w-5 text-red-600 dark:text-red-400" />
+                          </div>
+                          <span className="text-xl font-semibold">
+                            Проблема
+                          </span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pt-4 pb-2">
+                        <p className="text-muted-foreground leading-relaxed text-base">
+                          {startup.problem}
+                        </p>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem
+                      value="solution"
+                      className="border-b border-border"
+                    >
+                      <AccordionTrigger className="hover:no-underline group">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-gradient-to-br from-green-500/10 to-emerald-500/10 group-hover:from-green-500/20 group-hover:to-emerald-500/20 transition-colors">
+                            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                          </div>
+                          <span className="text-xl font-semibold">Решение</span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pt-4 pb-2">
+                        <p className="text-muted-foreground leading-relaxed text-base">
+                          {startup.solution}
+                        </p>
+                      </AccordionContent>
+                    </AccordionItem>
+
+                    <AccordionItem value="description" className="border-0">
+                      <AccordionTrigger className="hover:no-underline group">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500/10 to-cyan-500/10 group-hover:from-blue-500/20 group-hover:to-cyan-500/20 transition-colors">
+                            <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                          </div>
+                          <span className="text-xl font-semibold">
+                            Полное описание
+                          </span>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pt-4 pb-2">
+                        <div className="prose prose-lg max-w-none">
+                          {startup.description
+                            .split("\n\n")
+                            .map((paragraph, index) => (
+                              <p
+                                key={index}
+                                className="text-muted-foreground mb-4 leading-relaxed text-base"
+                              >
+                                {paragraph}
+                              </p>
+                            ))}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
                 </CardContent>
               </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <h2 className="text-2xl font-semibold mb-4">Решение</h2>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {startup?.solution}
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <h2 className="text-2xl font-semibold mb-4">
-                    Об этом стартапе
-                  </h2>
-                  {startup?.description
-                    .split("\n\n")
-                    .map((paragraph, index) => (
-                      <p
-                        key={index}
-                        className="text-muted-foreground mb-4 leading-relaxed"
-                      >
-                        {paragraph}
+
+              <Card className="border-2 hover:shadow-xl transition-all duration-300 backdrop-blur-sm bg-card/50 hover:border-primary/30">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10">
+                      <Users className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold mb-3">
+                        Целевая аудитория
+                      </h3>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {startup.target_audience}
                       </p>
-                    ))}
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <h2 className="text-2xl font-semibold mb-4">
-                    Целевая аудитория
-                  </h2>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {startup?.target_audience}
-                  </p>
-                </CardContent>
-              </Card>
+              {startup.categories.length > 0 && (
+                <Card className="border-2 hover:shadow-xl transition-all duration-300 backdrop-blur-sm bg-card/50 hover:border-primary/30">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500/10 to-orange-500/10">
+                        <Tag className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold mb-3">
+                          Categories
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                          {startup.categories.map((category: any) => (
+                            <Badge
+                              key={category.id}
+                              variant="outline"
+                              className="border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors px-3 py-1 text-sm"
+                            >
+                              {category.name}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
             <div>
               <Card>

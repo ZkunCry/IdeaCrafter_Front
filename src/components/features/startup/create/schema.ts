@@ -26,16 +26,16 @@ export const formSchema = z.object({
     .int()
     .min(1, "Выберите стадию развития"),
   files: z.file().nullable(),
-  // category_ids: z
-  //   .array(z.number().int().min(1))
-  //   .nonempty("Выберите хотя бы одну категорию"),
+  category_ids: z
+    .array(z.number().int().min(1))
+    .nonempty("Выберите хотя бы одну категорию"),
 });
 
 export const defaultValues = {
   name: "",
   description: "",
   short_description: "",
-  // category_ids: [],
+  category_ids: [],
   target_audience: "",
   problem: "",
   solution: "",

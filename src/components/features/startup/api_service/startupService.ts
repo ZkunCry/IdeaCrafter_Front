@@ -1,6 +1,7 @@
 import { axiosInstance } from "@/src/api/axios";
 import type {
   Category,
+  CategoryResponse,
   CreateStartup,
   Stage,
   Startup,
@@ -13,10 +14,13 @@ export const StartupService = {
     return response.data;
   },
   async getCategories() {
-    const response = await axiosInstance.get<Category[]>("/category");
+    const response = await axiosInstance.get<CategoryResponse>(
+      "/category/list"
+    );
     return response.data;
   },
   async createStartup(data: FormData): Promise<Startup> {
+    console.log(data);
     const response = await axiosInstance.post<Startup>("/startup", data);
     return response.data;
   },

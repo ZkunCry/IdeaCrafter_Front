@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 const tabs = [
-  { href: "/account", label: "Account" },
-  { href: "/account/change-password", label: "Change password" },
+  { href: "/account", label: "Аккаунт" },
+  { href: "/account/change-password", label: "Смена пароля" },
 ];
 
 export default function Tabs() {

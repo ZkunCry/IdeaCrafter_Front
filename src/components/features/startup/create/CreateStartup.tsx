@@ -53,23 +53,23 @@ import { useCreateStartup } from "./useStartup";
 import axios, { type AxiosError } from "axios";
 import { useGetStages } from "./useGetStages";
 import { FileUploader } from "@/src/components/widgets/fileUploader/FileUploader";
-import { revalidatePath } from "next/cache";
+import { useGetCategories } from "./useGetCategories";
 const CreateStartup = () => {
   const { mutateAsync: createStartup, isPending } = useCreateStartup();
   const { data: stages } = useGetStages();
-
+  const { data: categories } = useGetCategories();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
-
+  console.log(form.getValues());
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
     try {
       console.log(values);
       const response = await createStartup(values);
       toast.success("Стартап успешно создан!");
-      revalidatePath("/startups");
+      // revalidatePath("/startups");
     } catch (error: Error | AxiosError) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data.message);
@@ -80,38 +80,38 @@ const CreateStartup = () => {
   };
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <div className="text-center space-y-4 mb-12 animate-fade-in">
-        <div className="flex items-center justify-center space-x-2 mb-4">
-          <div className="flex items-center justify-center w-12 h-12 bg-primary rounded-full">
+    <main className="container px-4 py-8 mx-auto">
+      <div className="mb-12 space-y-4 text-center animate-fade-in">
+        <div className="flex items-center justify-center mb-4 space-x-2">
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary">
             <Building2 className="w-6 h-6 text-primary-foreground" />
           </div>
           <h1 className="text-4xl font-bold text-foreground">
             Создайте свой стартап
           </h1>
         </div>
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+        <p className="max-w-2xl mx-auto text-xl text-muted-foreground">
           Поделитесь своей идеей с сообществом, найдите единомышленников и
           начните свой путь к успеху
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1 space-y-4">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="space-y-4 lg:col-span-1">
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Преимущества публикации</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-start space-x-3">
-                <div className="flex items-center justify-center w-8 h-8 bg-sky-500/50 rounded-full flex-shrink-0">
+                <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-full bg-sky-500/50">
                   <Users
                     className="w-4 h-4 text-primary"
                     color="oklch(58.5% 0.169 237.323)"
                   />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-foreground">
+                  <h4 className="text-sm font-semibold text-foreground">
                     Найдите команду
                   </h4>
                   <p className="text-xs text-muted-foreground">
@@ -121,11 +121,11 @@ const CreateStartup = () => {
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex items-center justify-center w-8 h-8 bg-success/10 rounded-full flex-shrink-0">
+                <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-full bg-success/10">
                   <Target className="w-4 h-4 text-success" color="green" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-foreground">
+                  <h4 className="text-sm font-semibold text-foreground">
                     Получите фидбек
                   </h4>
                   <p className="text-xs text-muted-foreground">
@@ -135,11 +135,11 @@ const CreateStartup = () => {
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex items-center justify-center w-8 h-8 bg-accent rounded-full flex-shrink-0">
+                <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-full bg-accent">
                   <Lightbulb className="w-4 h-4 text-accent-foreground" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-foreground">
+                  <h4 className="text-sm font-semibold text-foreground">
                     Развивайте идею
                   </h4>
                   <p className="text-xs text-muted-foreground">
@@ -149,11 +149,11 @@ const CreateStartup = () => {
               </div>
 
               <div className="flex items-start space-x-3">
-                <div className="flex items-center justify-center w-8 h-8 bg-muted rounded-full flex-shrink-0">
+                <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-full bg-muted">
                   <Rocket className="w-4 h-4 text-muted-foreground" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm text-foreground">
+                  <h4 className="text-sm font-semibold text-foreground">
                     Запустите быстрее
                   </h4>
                   <p className="text-xs text-muted-foreground">
@@ -199,7 +199,7 @@ const CreateStartup = () => {
                       </FormItem>
                     )}
                   />
-
+                  <FormLabel>Логотип вашего стартапа *</FormLabel>
                   <FileUploader
                     onFileSelect={(file) => form.setValue("files", file)}
                   />
@@ -246,10 +246,10 @@ const CreateStartup = () => {
                     )}
                   />
 
-                  <div className="grid grid-cols-1  gap-6">
-                    {/* <FormField
+                  <div className="grid grid-cols-1 gap-6">
+                    <FormField
                       control={form.control}
-                      name="category"
+                      name="category_ids"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Категория *</FormLabel>
@@ -263,12 +263,12 @@ const CreateStartup = () => {
                               </MultiSelectTrigger>
                             </FormControl>
                             <MultiSelectContent>
-                              {categories.map((category) => (
+                              {categories?.items.map((category) => (
                                 <MultiSelectItem
-                                  key={category}
-                                  value={category}
+                                  key={category.id}
+                                  value={category.id}
                                 >
-                                  {category}
+                                  {category.name}
                                 </MultiSelectItem>
                               ))}
                             </MultiSelectContent>
@@ -276,7 +276,7 @@ const CreateStartup = () => {
                           <FormMessage />
                         </FormItem>
                       )}
-                    /> */}
+                    />
 
                     <FormField
                       control={form.control}
@@ -372,7 +372,7 @@ const CreateStartup = () => {
                     )}
                   />
 
-                  {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="teamSize"
@@ -449,7 +449,7 @@ const CreateStartup = () => {
                     )}
                   /> */}
 
-                  <div className="flex items-center justify-end space-x-4 pt-4">
+                  <div className="flex items-center justify-end pt-4 space-x-4">
                     <Button
                       type="button"
                       variant="outline"
@@ -460,7 +460,7 @@ const CreateStartup = () => {
                     <Button type="submit" size="lg">
                       {isPending ? (
                         <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
+                          <div className="w-4 h-4 mr-2 border-b-2 rounded-full animate-spin border-primary-foreground"></div>
                           Публикуем...
                         </>
                       ) : (

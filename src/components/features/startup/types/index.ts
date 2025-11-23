@@ -37,7 +37,10 @@ export interface Startup {
   CreatedAt: string;
   LogoURL: string;
 }
-
+export type CategoryResponse = {
+  items: Category[];
+  total_count: number;
+};
 export type CreateStartup = {
   name: string;
   shortDescription: string;

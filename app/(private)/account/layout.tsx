@@ -15,7 +15,7 @@ export default function RootLayout({
         <div className="w-full mt-[7.3rem]">
           <div className="mt-4">
             <Container>
-              <h2 className="text-3xl font-semibold">Account dashboard</h2>
+              <h2 className="text-3xl font-semibold">Дашбоард аккаунта</h2>
               {children}
             </Container>
           </div>

@@ -6,7 +6,7 @@ async function provider(
   req: NextRequest,
   ctx: { params: { proxy: string[] } }
 ) {
-  const params = ctx.params;
+  const params = await ctx.params;
   let url = `${apiServer}${params.proxy.join("/")}`;
 
   const search = req.nextUrl.searchParams.toString();
@@ -28,7 +28,6 @@ async function provider(
     body,
   });
 
-  // Пробрасываем ответ от backend без изменений
   const responseBody = await res.arrayBuffer();
   const responseHeaders = new Headers(res.headers);
 
