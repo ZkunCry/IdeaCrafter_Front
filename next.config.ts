@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   skipTrailingSlashRedirect: true,
+  experimental: {
+    optimizePackageImports: ["lucide-react", "shadcn-ui"],
+  },
   images: {
     remotePatterns: [
       {

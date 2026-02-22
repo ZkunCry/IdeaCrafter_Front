@@ -6,7 +6,6 @@ import { StartupService } from "@/src/components/features/startup/api_service/st
 import { StartupPagination } from "@/src/components/features/startup/review/StartupPagination";
 import { Suspense } from "react";
 import { LoaderCircle } from "lucide-react";
-export const revalidate = 60;
 export default async function Page({
   searchParams,
 }: {

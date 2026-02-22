@@ -25,19 +25,11 @@ export async function POST(req: Request) {
     const response = NextResponse.json({ ok: true });
     const setCookies = res.headers.getSetCookie();
 
-    if (setCookies) {
+    if (setCookies?.length) {
       for (const cookie of setCookies) {
-        const [name, ...rest] = cookie.split("=");
-        const value = rest.join("=").split(";")[0];
-        response.cookies.set(name, value, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "strict",
-          path: "/",
-        });
+        response.headers.append("Set-Cookie", cookie);
       }
     }
-
     return response;
   } catch (e) {
     console.error("Error refreshing token:", e);

@@ -14,19 +14,40 @@ export const AuthService = {
   async signIn(data: AuthCredentials): Promise<AuthResponse> {
     const response = await axiosInstance.post<AuthResponse>(
       "/auth/signin",
-      data
+      data,
     );
     return response.data;
   },
   async signUp(data: AuthCredentials): Promise<AuthResponse> {
     const response = await axiosInstance.post<AuthResponse>(
       "/auth/signup",
-      data
+      data,
     );
     return response.data;
   },
   async identityMe() {
-    const response = await axiosInstance.post<AuthResponse>("/auth/me");
+    const isSsr = typeof window === "undefined";
+
+    if (isSsr) {
+      const { cookies } = await import("next/headers");
+      const cookieStore = await cookies();
+      const cookieString = cookieStore
+        .getAll()
+        .map((c) => `${c.name}=${c.value}`)
+        .join("; ");
+      if (!cookieString) return null;
+      const response = await fetch("http://localhost:3001/api/auth/me", {
+        headers: {
+          Cookie: cookieString,
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 0 },
+      });
+      if (!response.ok) return null;
+      const data = (await response.json()) as AuthResponse;
+      return data;
+    }
+    const response = await axiosInstance.get<AuthResponse>("/auth/me");
     return response.data;
   },
   async refresh() {

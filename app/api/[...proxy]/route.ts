@@ -4,7 +4,7 @@ const apiServer = "http://localhost:3001/api/";
 
 async function provider(
   req: NextRequest,
-  ctx: { params: { proxy: string[] } }
+  ctx: { params: { proxy: string[] } },
 ) {
   const params = await ctx.params;
   let url = `${apiServer}${params.proxy.join("/")}`;
@@ -15,7 +15,11 @@ async function provider(
   }
 
   const headers = new Headers();
-  req.headers.forEach((value, key) => headers.append(key, value));
+  req.headers.forEach((value, key) => {
+    if (key.toLowerCase() !== "host") {
+      headers.append(key, value);
+    }
+  });
 
   let body: BodyInit | undefined = undefined;
   if (req.method !== "GET" && req.method !== "HEAD") {
@@ -26,6 +30,7 @@ async function provider(
     method: req.method,
     headers,
     body,
+    redirect: "manual",
   });
 
   const responseBody = await res.arrayBuffer();

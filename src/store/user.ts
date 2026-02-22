@@ -16,7 +16,6 @@ export interface UserState {
     setId: (id: string) => void;
     setIsAuth: (isAuth: boolean) => void;
     setCredentials: (credentials: AuthResponse) => void;
-    getUser: () => void;
     deleteCredentials: () => void;
   };
   error?: string;
@@ -50,29 +49,6 @@ export const useUserStore = create<UserState>()((set, get) => ({
         isAuth: false,
       });
     },
-    getUser: async () => {
-      const user = get();
-      if (user.isInitialized) return;
-      try {
-        console.log("we are here");
-        const response = await AuthService.identityMe();
-        set({
-          ...response,
-          isAuth: true,
-          isInitialized: true,
-        });
-      } catch (error) {
-        set({
-          id: "",
-          username: "",
-          email: "",
-          avatarUrl: "",
-          isAuth: false,
-          isInitialized: true,
-          error: error?.message,
-        });
-      }
-    },
   },
 }));
 
@@ -82,8 +58,4 @@ export const useSetToken = () =>
 export const useSetCredentials = () =>
   useUserStore((state) => state.actions.setCredentials);
 
-export const useGetUser = () =>
-  useUserStore((state) => {
-    return state.actions.getUser;
-  });
 export const useUser = () => useUserStore((state) => state);
