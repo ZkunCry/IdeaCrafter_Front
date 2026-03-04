@@ -1,5 +1,4 @@
 import { axiosInstance } from "@/src/api/axios";
-
 export interface AuthCredentials {
   email: string;
   password: string;
@@ -25,28 +24,26 @@ export const AuthService = {
     );
     return response.data;
   },
-  async identityMe() {
-    const isSsr = typeof window === "undefined";
-
-    if (isSsr) {
-      const { cookies } = await import("next/headers");
-      const cookieStore = await cookies();
-      const cookieString = cookieStore
-        .getAll()
-        .map((c) => `${c.name}=${c.value}`)
-        .join("; ");
-      if (!cookieString) return null;
-      const response = await fetch("http://localhost:3001/api/auth/me", {
-        headers: {
-          Cookie: cookieString,
-          "Content-Type": "application/json",
-        },
-        next: { revalidate: 0 },
-      });
-      if (!response.ok) return null;
-      const data = (await response.json()) as AuthResponse;
-      return data;
-    }
+  async identityMeServer() {
+    const { cookies } = await import("next/headers");
+    const cookieStore = await cookies();
+    const cookieString = cookieStore
+      .getAll()
+      .map((c) => `${c.name}=${c.value}`)
+      .join("; ");
+    if (!cookieString) return null;
+    const response = await fetch("http://localhost:3001/api/auth/me", {
+      headers: {
+        Cookie: cookieString,
+        "Content-Type": "application/json",
+      },
+      next: { revalidate: 0 },
+    });
+    if (!response.ok) return null;
+    const data = (await response.json()) as AuthResponse;
+    return data;
+  },
+  async identityMeClient() {
     const response = await axiosInstance.get<AuthResponse>("/auth/me");
     return response.data;
   },

@@ -23,7 +23,7 @@ import {
 } from "@/src/components/ui/form";
 import { Eye, EyeOff, Rocket } from "lucide-react";
 import { defaultValues, SignInForm, signInSchema } from "./schema";
-import { useSignIn } from "./useSignIn";
+import { useSignIn } from "@/src/components/features/auth/signin/useSignIn";
 import { useSetCredentials } from "@/src/store/user";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -37,7 +37,7 @@ const SignIn = () => {
         toast("Ваша сессия истекла", {
           description: "Пожалуйста, войдите снова",
         });
-      }, 100); // 100–300 мс достаточно
+      }, 100);
 
       return () => clearTimeout(timer);
     }

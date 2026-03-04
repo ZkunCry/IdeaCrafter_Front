@@ -14,10 +14,7 @@ import {
 import Link from "next/link";
 
 import HeaderMain from "@/src/components/widgets/header/HeaderMain";
-import {
-  Startup,
-  type StartupResponse,
-} from "@/src/components/features/startup/types";
+import { type StartupResponse } from "@/src/components/features/startup/types";
 import { axiosInstance } from "@/src/api/axios";
 import StartupCard from "@/src/components/features/startup/create/StartupCard";
 import HeroBackground from "@/src/components/common/background/HeroBackground";

@@ -5,7 +5,7 @@ interface MainProps {
   children?: React.ReactNode;
 }
 const Main = ({ className, children }: MainProps) => {
-  return <section className={cn(className)}>{children}</section>;
+  return <main className={cn(className)}>{children}</main>;
 };
 
 export default Main;
