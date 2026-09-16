@@ -1,36 +1,154 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# IdeaCrafter — фронтенд
 
-## Getting Started
+Веб-приложение платформы IdeaCrafter. Здесь можно опубликовать идею стартапа, найти в команду единомышленников и присоединиться к чужому проекту.
 
-First, run the development server:
+Это клиентская часть. Данные хранит и обрабатывает отдельный API на Go (репозиторий `startup_back`), без него приложение не работает.
+
+## Возможности
+
+- **Каталог стартапов**: поиск, фильтр по категориям, пагинация.
+- **Категории**: у каждой видно число стартапов, по клику открывается отфильтрованный каталог.
+- **Страница стартапа**: описание, проблема и решение, команда, открытые вакансии, файлы. Ссылкой на стартап можно поделиться.
+- **Создание и редактирование стартапа**: логотип, стадия, несколько категорий.
+- **Вакансии и заявки**:
+  - основатель создаёт вакансии, принимает или отклоняет заявки;
+  - при принятии кандидат занимает роль, вакансия закрывается, остальные заявки на неё отклоняются автоматически.
+- **Избранное**: стартап можно сохранить сердечком с карточки или со страницы проекта.
+- **Личный кабинет**:
+  - профиль и смена пароля;
+  - «Мои стартапы» и управление ими;
+  - «Избранные»;
+  - «Мои заявки»: история откликов со статусами, заявку на рассмотрении можно отозвать.
+- **Авторизация**: регистрация и вход, сессия хранится в httpOnly-cookie, access-токен обновляется автоматически.
+
+## Стек
+
+| Назначение | Технологии |
+| --- | --- |
+| Фреймворк | [Next.js 15](https://nextjs.org) (App Router, Turbopack), React 19, TypeScript |
+| Стили и UI | Tailwind CSS 4, [shadcn/ui](https://ui.shadcn.com) на Radix UI, иконки lucide-react |
+| Данные | TanStack Query 5, axios |
+| Формы | react-hook-form, zod |
+| Состояние | zustand (текущий пользователь) |
+| Уведомления | sonner |
+
+## Требования
+
+- Node.js 20 или новее и npm.
+- Запущенный API `startup_back`, по умолчанию на `http://localhost:3001`. Для API нужны PostgreSQL и хранилище S3 для логотипов.
+
+## Быстрый старт
 
 ```bash
+git clone https://github.com/ZkunCry/IdeaCrafter_Front.git
+cd IdeaCrafter_Front
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Приложение откроется на [http://localhost:3000](http://localhost:3000). API должен быть запущен заранее.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Переменные окружения
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+При локальной разработке, когда фронтенд работает на `:3000`, а API на `:3001`, ничего настраивать не нужно. В остальных случаях создайте файл `.env.local`:
 
-## Learn More
+```env
+# Адрес Go API, на который Next.js проксирует запросы /api/*
+API_SERVER_URL=http://localhost:3001
 
-To learn more about Next.js, take a look at the following resources:
+# Базовый адрес API для браузера и серверных компонентов (обычно — прокси самого Next.js)
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Переменная | По умолчанию | Описание |
+| --- | --- | --- |
+| `API_SERVER_URL` | `http://localhost:3001` | Куда прокси `app/api/[...proxy]` пересылает запросы |
+| `NEXT_PUBLIC_API_URL` | `http://localhost:3000/api` | Базовый URL для запросов к API из приложения |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Файлы `.env*` добавлены в `.gitignore` и в репозиторий не попадают.
 
-## Deploy on Vercel
+## Скрипты
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Команда | Что делает |
+| --- | --- |
+| `npm run dev` | Dev-сервер с Turbopack |
+| `npm run build` | Production-сборка |
+| `npm run start` | Запуск собранного приложения |
+| `npx tsc --noEmit` | Проверка типов |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Как устроено взаимодействие с API
+
+```
+Браузер ──► Next.js (:3000) ──► /api/[...proxy] ──► Go API (:3001)
+```
+
+- Все запросы идут на `/api/*` того же домена, а route handler `app/api/[...proxy]/route.ts` пересылает их в Go API. Благодаря этому httpOnly-cookie `access_token` и `refresh_token` работают без настройки CORS.
+- Клиентские запросы идут через `src/api/axios.ts`:
+  - при ответе `401` перехватчик один раз вызывает `/auth/refresh` и повторяет запрос;
+  - остальные ошибки показываются всплывающим уведомлением, если в запросе не передан флаг `skipErrorToast`.
+- Серверные компоненты передают cookie пользователя в API сами (`startupServerService.ts`).
+- `middleware.ts` не пускает гостей в `/account/*` и `/startup/create` и отправляет их на страницу входа.
+
+## Структура проекта
+
+```
+app/
+├── (private)/(layout)/        # Страницы с общей шапкой и подвалом
+│   ├── categories/            # Категории
+│   ├── startups/              # Каталог стартапов
+│   └── startup/               # Страница стартапа и создание
+├── (private)/account/         # Личный кабинет
+│   ├── (tabs)/                # Профиль и смена пароля
+│   ├── startups/              # Мои стартапы и управление
+│   ├── favorites/             # Избранное
+│   └── applications/          # Мои заявки
+├── (public)/                  # Условия использования, политика конфиденциальности
+├── auth/                      # Вход и регистрация
+└── api/                       # Прокси к Go API и обновление токена
+
+src/
+├── api/                       # Настроенный экземпляр axios
+├── components/
+│   ├── ui/                    # Базовые компоненты shadcn/ui
+│   ├── common/, widgets/      # Шапка, подвал, контейнеры, загрузчик файлов
+│   └── features/              # Функциональные модули
+│       ├── account/           # Кабинет: профиль, сайдбар, избранное, заявки
+│       ├── auth/              # Авторизация
+│       ├── category/          # Категории
+│       └── startup/           # Стартапы, вакансии, заявки, избранное
+│           ├── api_service/   # Запросы к API
+│           ├── hooks/         # Хуки TanStack Query
+│           ├── create/        # Форма стартапа и карточка
+│           ├── manage/        # Управление: редактирование, вакансии, входящие заявки
+│           ├── review/        # Каталог, фильтры, участие, избранное
+│           └── types/         # Типы данных
+├── constants/                 # Базовый URL API и ключи запросов
+├── lib/                       # Утилиты: даты, ошибки API, cn()
+├── providers/                 # QueryClient и хранилище пользователя
+└── store/                     # zustand-хранилище пользователя
+```
+
+## Основные эндпоинты API
+
+| Метод и путь | Назначение |
+| --- | --- |
+| `POST /auth/signup`, `POST /auth/signin`, `POST /auth/logout` | Регистрация, вход, выход |
+| `GET /auth/me`, `POST /auth/refresh` | Текущий пользователь, обновление токена |
+| `GET /startup/list` | Каталог (`offset`, `limit`, `searchString`, `category`) |
+| `GET /startup/:id`, `POST /startup`, `PUT /startup/:id` | Просмотр, создание, редактирование |
+| `GET /startup/my-startups` | Стартапы текущего пользователя |
+| `GET /category/list`, `GET /stage`, `GET /role` | Справочники |
+| `/vacancy/*` | Вакансии стартапа |
+| `POST /application`, `GET /application/my`, `DELETE /application/:id` | Отправить, посмотреть свои, отозвать заявку |
+| `GET /application/startup/:id`, `PUT /application/status/:id` | Входящие заявки и решение по ним (только для основателя) |
+| `GET /favorite/my`, `GET /favorite/ids` | Избранные стартапы и их id |
+| `POST` / `DELETE /favorite/startup/:id` | Добавить в избранное или убрать |
+| `GET /favorite/startup/:id/count` | Сколько раз стартап добавили в избранное |
+
+Ошибки API приходят в формате `{ "error": "..." }`.
+
+## Известные ограничения
+
+- Изменить никнейм, почту и аватар пока нельзя: на API нет такого эндпоинта, поэтому профиль доступен только для просмотра.
+- Форма смены пароля пока не отправляет данные на сервер.
+- Серверная проверка пользователя (`AuthService.identityMeServer`) обращается к `http://localhost:3001` напрямую, мимо переменных окружения. Перед деплоем этот адрес нужно вынести в `API_SERVER_URL`.
