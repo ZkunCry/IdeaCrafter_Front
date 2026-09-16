@@ -26,11 +26,19 @@ import { defaultValues, SignInForm, signInSchema } from "./schema";
 import { useSignIn } from "@/src/components/features/auth/signin/useSignIn";
 import { useSetCredentials } from "@/src/store/user";
 import { useRouter, useSearchParams } from "next/navigation";
+import { getApiErrorMessage } from "@/src/lib/api-error";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const searchParams = useSearchParams();
   const reason = searchParams.get("reason");
+  // Only same-origin paths are honoured, so a crafted ?redirect= cannot bounce
+  // a freshly signed-in user to another site.
+  const requestedRedirect = searchParams.get("redirect");
+  const redirectTo =
+    requestedRedirect && /^\/(?!\/)/.test(requestedRedirect)
+      ? requestedRedirect
+      : "/";
   useEffect(() => {
     if (reason === "session_expired") {
       const timer = setTimeout(() => {
@@ -53,14 +61,15 @@ const SignIn = () => {
   const onSubmit = async (data: SignInForm) => {
     try {
       const response = await signIn(data);
-      toast("Welcome back!", {
-        description: "You have successfully signed in.",
+      toast("Добро пожаловать!", {
+        description: "Вы успешно вошли в систему.",
       });
       setCredentials(response);
-      router.push("/");
+      router.push(redirectTo);
+      router.refresh();
     } catch (error) {
-      toast("Something went wrong", {
-        description: error?.message,
+      toast("Что-то пошло не так", {
+        description: getApiErrorMessage(error, "Не удалось войти"),
       });
     }
   };
@@ -81,9 +90,11 @@ const SignIn = () => {
 
         <Card className="shadow-xl border-0 bg-card/95 backdrop-blur">
           <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+            <CardTitle className="text-2xl font-bold">
+              Добро пожаловать обратно
+            </CardTitle>
             <CardDescription>
-              Enter your credentials to access your account
+              Введите свои учетные данные для доступа к вашей учетной записи
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -101,7 +112,7 @@ const SignIn = () => {
                       <FormControl>
                         <Input
                           type="email"
-                          placeholder="Enter your email"
+                          placeholder="Введите ваш email"
                           {...field}
                         />
                       </FormControl>
@@ -115,12 +126,12 @@ const SignIn = () => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>Пароль</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
                             type={showPassword ? "text" : "password"}
-                            placeholder="Enter your password"
+                            placeholder="Введите ваш пароль"
                             {...field}
                             className="pr-10"
                           />
@@ -147,7 +158,7 @@ const SignIn = () => {
                     href="/forgot-password"
                     className="text-sm text-primary hover:underline"
                   >
-                    Forgot password?
+                    Забыли пароль?
                   </Link>
                 </div>
 
@@ -156,19 +167,19 @@ const SignIn = () => {
                   className="cursor-pointer w-full"
                   disabled={form.formState.isSubmitting}
                 >
-                  {form.formState.isSubmitting ? "Signing in..." : "Sign In"}
+                  {form.formState.isSubmitting ? "Вход..." : "Войти"}
                 </Button>
               </form>
             </Form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                Don't have an account?{" "}
+                Нет учетной записи ?{" "}
                 <Link
                   href="/auth/signup"
                   className="text-primary hover:underline font-medium"
                 >
-                  Sign up
+                  Зарегистрироваться
                 </Link>
               </p>
             </div>

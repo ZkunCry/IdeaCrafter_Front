@@ -1,9 +1,10 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import Header from "@/src/components/common/header/Header";
 import Container from "@/src/components/common/container/Container";
-import { Rocket, Settings, LogOut, User } from "lucide-react";
+import { Rocket, Settings, LogOut, Plus, User, Heart, Send } from "lucide-react";
+import { AuthService } from "@/src/components/features/auth/api/authApi";
 import { Button } from "@/src/components/ui/button";
 import { useUser } from "@/src/store/user";
 import { Skeleton } from "../../ui/skeleton";
@@ -18,8 +19,17 @@ import {
 } from "@/src/components/ui/dropdown-menu";
 const HeaderMain = () => {
   const user = useUser();
+  const avatarLetter = user.username?.charAt(0).toUpperCase() || "U";
 
-  console.log(user);
+  const handleLogout = async () => {
+    try {
+      await AuthService.logout();
+    } finally {
+      // A full reload drops the server-rendered user and every cached query.
+      window.location.href = "/";
+    }
+  };
+
 
   return (
     <Header className="w-full border fixed top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -47,21 +57,28 @@ const HeaderMain = () => {
               <li className="text-muted-foreground hover:text-primary transition-colors">
                 <Link href="/startups">Стартапы</Link>
               </li>
-              <li className="text-muted-foreground hover:text-primary transition-colors">
-                <Link href="/generate">Сгенерировать идею</Link>
-              </li>
             </ul>
           </nav>
 
           <div className="flex items-center gap-4">
             {user.isAuth ? (
-              <DropdownMenu>
+              <>
+                <Button asChild className="px-3 sm:px-4" title="Создать стартап">
+                  <Link href="/startup/create">
+                    <Plus aria-hidden="true" />
+                    <span className="hidden sm:inline">Создать стартап</span>
+                  </Link>
+                </Button>
+                <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="cursor-pointer flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-all duration-200 group outline-none">
                     <Avatar className="h-9 w-9 border border-border group-hover:border-primary/50 transition-all">
-                      <AvatarImage src={user.avatarUrl} alt={user.username} />
+                      <AvatarImage
+                        src={user.avatarUrl}
+                        alt={avatarLetter}
+                      />
                       <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
-                        {user.username}
+                        {avatarLetter}
                       </AvatarFallback>
                     </Avatar>
                     <div className="text-left hidden lg:block">
@@ -96,7 +113,25 @@ const HeaderMain = () => {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link
-                      href="/settings"
+                      href="/account/favorites"
+                      className="flex items-center cursor-pointer"
+                    >
+                      <Heart className="mr-2 h-4 w-4" />
+                      <span>Избранное</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/account/applications"
+                      className="flex items-center cursor-pointer"
+                    >
+                      <Send className="mr-2 h-4 w-4" />
+                      <span>Мои заявки</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/account/change-password"
                       className="flex items-center cursor-pointer"
                     >
                       <Settings className="mr-2 h-4 w-4" />
@@ -106,15 +141,14 @@ const HeaderMain = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
-                    onClick={() => {
-                      window.location.href = "/";
-                    }}
+                    onClick={handleLogout}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Выход из аккаунта</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
+                </DropdownMenu>
+              </>
             ) : (
               <div className="flex gap-[0.5rem]">
                 <Link href={"/auth/signin"}>

@@ -1,5 +1,5 @@
 import React from "react";
-import { TabsContent } from "@/src/components/ui/tabs";
+
 import {
   Card,
   CardContent,

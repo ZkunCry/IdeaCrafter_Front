@@ -1,10 +1,10 @@
 import type { NextRequest } from "next/server";
 
-const apiServer = "http://localhost:3001/api/";
+const apiServer = `${process.env.API_SERVER_URL || "http://localhost:3001"}/api/`;
 
 async function provider(
   req: NextRequest,
-  ctx: { params: { proxy: string[] } },
+  ctx: { params: Promise<{ proxy: string[] }> },
 ) {
   const params = await ctx.params;
   let url = `${apiServer}${params.proxy.join("/")}`;
@@ -26,21 +26,27 @@ async function provider(
     body = await req.arrayBuffer();
   }
 
-  const res = await fetch(url, {
-    method: req.method,
-    headers,
-    body,
-    redirect: "manual",
-  });
+  try {
+    const res = await fetch(url, {
+      method: req.method,
+      headers,
+      body,
+      redirect: "manual",
+    });
 
-  const responseBody = await res.arrayBuffer();
-  const responseHeaders = new Headers(res.headers);
+    const responseBody = await res.arrayBuffer();
+    const responseHeaders = new Headers(res.headers);
 
-  return new Response(responseBody, {
-    status: res.status,
-    statusText: res.statusText,
-    headers: responseHeaders,
-  });
+    return new Response(responseBody, {
+      status: res.status,
+      statusText: res.statusText,
+      headers: responseHeaders,
+    });
+  } catch (error) {
+    console.error(`API proxy request failed: ${req.method} ${url}`, error);
+
+    return Response.json({ error: "Сервер API недоступен" }, { status: 502 });
+  }
 }
 
 export {

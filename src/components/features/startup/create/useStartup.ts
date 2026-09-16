@@ -1,22 +1,50 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { StartupService } from "../api_service/startupService";
-import type { CreateStartup } from "../types";
+import { QUERY_KEYS } from "@/src/constants/config";
+import type { StartupFormValues } from "../types";
+
+export const buildStartupFormData = (values: StartupFormValues): FormData => {
+  const formData = new FormData();
+
+  formData.append("name", values.name);
+  formData.append("short_description", values.short_description);
+  formData.append("description", values.description);
+  formData.append("target_audience", values.target_audience);
+  formData.append("problem", values.problem);
+  formData.append("solution", values.solution);
+  formData.append("stage_id", String(values.stage_id));
+  formData.append("category_ids", values.category_ids.join(","));
+
+  if (values.files instanceof File) {
+    formData.append("files", values.files);
+  }
+
+  return formData;
+};
 
 export const useCreateStartup = () => {
-  return useMutation({
-    mutationFn: (data: CreateStartup) => {
-      const formData = new FormData();
-      Object.entries(data).forEach(([key, value]) => {
-        if (key === "files" && value instanceof File) {
-          formData.append(key, value);
-        } else if (Array.isArray(value)) {
-          formData.append(key, value.join(","));
-        } else {
-          formData.append(key, String(value));
-        }
-      });
+  const queryClient = useQueryClient();
 
-      return StartupService.createStartup(formData);
+  return useMutation({
+    mutationFn: (values: StartupFormValues) =>
+      StartupService.createStartup(buildStartupFormData(values)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MY_STARTUPS });
+    },
+  });
+};
+
+export const useUpdateStartup = (startupId: number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (values: StartupFormValues) =>
+      StartupService.updateStartup(startupId, buildStartupFormData(values)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.STARTUP(startupId),
+      });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.MY_STARTUPS });
     },
   });
 };

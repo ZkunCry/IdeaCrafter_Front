@@ -12,6 +12,7 @@ import {
 import { usePathname, useSearchParams } from "next/navigation";
 
 interface Props {
+  /** 1-based number of the page being shown. */
   currentPage: number;
   totalPages: number;
 }
@@ -20,18 +21,21 @@ export function StartupPagination({ currentPage, totalPages }: Props) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  if (totalPages <= 1) return null;
+
   const createPageLink = (page: number) => {
     const basePath = pathname.replace(/\/$/, "");
-
     const newParams = new URLSearchParams(searchParams?.toString() || "");
 
-    newParams.set("page", String(page));
+    if (page <= 1) newParams.delete("page");
+    else newParams.set("page", String(page));
 
     const queryString = newParams.toString();
-
-    return `${basePath}?${queryString}`;
+    return queryString ? `${basePath}?${queryString}` : basePath;
   };
+
   const visiblePages = getVisiblePages(currentPage, totalPages);
+
   return (
     <Pagination className="mt-8">
       <PaginationContent>
@@ -49,13 +53,13 @@ export function StartupPagination({ currentPage, totalPages }: Props) {
           ) : (
             <PaginationItem key={page}>
               <PaginationLink
-                href={createPageLink(page as number)}
-                isActive={page === currentPage + 1}
+                href={createPageLink(page)}
+                isActive={page === currentPage}
               >
                 {page}
               </PaginationLink>
             </PaginationItem>
-          )
+          ),
         )}
 
         {currentPage < totalPages && (

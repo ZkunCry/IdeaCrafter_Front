@@ -10,21 +10,16 @@ import {
   Lightbulb,
   Target,
   CheckCircle,
+  ArrowRight,
+  Compass,
 } from "lucide-react";
 import Link from "next/link";
 
 import HeaderMain from "@/src/components/widgets/header/HeaderMain";
-import { type StartupResponse } from "@/src/components/features/startup/types";
-import { axiosInstance } from "@/src/api/axios";
-import StartupCard from "@/src/components/features/startup/create/StartupCard";
 import HeroBackground from "@/src/components/common/background/HeroBackground";
 import Footer from "@/src/components/common/footer/Footer";
 
 export default async function Home() {
-  const response = (
-    await axiosInstance.get<StartupResponse>("/startup/list?offset=0&limit=10")
-  ).data;
-
   return (
     <div className="w-full flex flex-col">
       <HeaderMain />
@@ -61,7 +56,7 @@ export default async function Home() {
                     основе искусственного интеллекта.
                   </p>
                 </div>
-                <div className="flex gap-[1rem] animate-fade-in-delay">
+                {/* <div className="flex gap-[1rem] animate-fade-in-delay">
                   <Link href={"/generate-idea"}>
                     <Button
                       variant={"default"}
@@ -79,7 +74,7 @@ export default async function Home() {
                       Исследовать стартапы
                     </Button>
                   </Link>
-                </div>
+                </div> */}
               </div>
             </div>
           </Container>
@@ -144,39 +139,6 @@ export default async function Home() {
                   <p className="text-muted-foreground">
                     Воплотите свою идею в реальность и запустите свой стартап
                   </p>
-                </div>
-              </div>
-            </div>
-          </Container>
-        </Section>
-
-        <Section className="w-full py-[8rem] ">
-          <Container>
-            <div className="flex lg:flex-row flex-col">
-              <div className="flex-1 lg:order-1 gap-8">
-                <div className="flex flex-col gap-8">
-                  <div className="flex flex-col gap-4">
-                    <h2 className="text-2xl font-bold text-foreground">
-                      Популярные идеи для стартапов
-                    </h2>
-                    <p className="text-muted-foreground">
-                      Откройте для себя самые популярные и инновационные идеи
-                      для стартапов от нашего сообщества
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {response.items.map((startup) => (
-                      <StartupCard startup={startup} key={startup.id} />
-                    ))}
-                  </div>
-                  <Button
-                    className="self-center"
-                    size={"lg"}
-                    variant={"outline"}
-                  >
-                    <Link href={"/startups"}> Перейти к списку стартапов</Link>
-                  </Button>
                 </div>
               </div>
             </div>
@@ -264,6 +226,29 @@ export default async function Home() {
                   </div>
                 </div>
               </div>
+            </div>
+          </Container>
+        </Section>
+
+        <Section className="relative w-full overflow-hidden border-y border-border/70 bg-gradient-subtle py-24 sm:py-32">
+          <div className="pointer-events-none absolute inset-0 bg-grid opacity-60" />
+          <Container>
+            <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold leading-tight text-foreground sm:text-5xl">
+                  Найдите идею, к которой захочется присоединиться
+                </h2>
+                <p className="mx-auto max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
+                  Изучите проекты сообщества, сравните подходы и найдите
+                  стартап, который вдохновит вас на собственный следующий шаг.
+                </p>
+              </div>
+              <Button asChild size="lg" className="mt-2">
+                <Link href="/startups">
+                  Смотреть стартапы
+                  <ArrowRight aria-hidden="true" />
+                </Link>
+              </Button>
             </div>
           </Container>
         </Section>

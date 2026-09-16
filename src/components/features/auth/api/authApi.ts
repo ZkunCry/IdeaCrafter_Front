@@ -47,6 +47,11 @@ export const AuthService = {
     const response = await axiosInstance.get<AuthResponse>("/auth/me");
     return response.data;
   },
+  async logout() {
+    await axiosInstance.post("/auth/logout", undefined, {
+      skipErrorToast: true,
+    });
+  },
   async refresh() {
     const response = await axiosInstance.post<AuthResponse>("/auth/refresh");
     return response.data;

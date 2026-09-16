@@ -6,78 +6,86 @@ import {
   Search,
   Code,
   DollarSign,
-  Heart,
+  HeartPulse,
   Gamepad2,
-  Truck,
+  ShoppingCart,
   Smartphone,
-  Shield,
-  Sparkles,
+  ShieldCheck,
+  Plus,
+  LayoutGrid,
+  Lightbulb,
+  type LucideIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import type {
+  Category,
+  CategoryResponse,
+} from "@/src/components/features/category/types";
 
-const categories = [
-  {
-    name: "IT & Technology",
-    icon: Code,
-    count: 156,
-    color: "bg-blue-100 text-blue-700",
-  },
-  {
-    name: "Finance",
-    icon: DollarSign,
-    count: 89,
-    color: "bg-green-100 text-green-700",
-  },
-  {
-    name: "Health & Wellness",
-    icon: Heart,
-    count: 124,
-    color: "bg-red-100 text-red-700",
-  },
-  {
-    name: "Gaming",
-    icon: Gamepad2,
-    count: 67,
-    color: "bg-purple-100 text-purple-700",
-  },
-  {
-    name: "E-commerce",
-    icon: Truck,
-    count: 92,
-    color: "bg-orange-100 text-orange-700",
-  },
-  {
-    name: "Mobile Apps",
-    icon: Smartphone,
-    count: 134,
-    color: "bg-indigo-100 text-indigo-700",
-  },
-  {
-    name: "Cybersecurity",
-    icon: Shield,
-    count: 45,
-    color: "bg-gray-100 text-gray-700",
-  },
-];
+const categoryIcons: Record<string, LucideIcon> = {
+  technology: Code,
+  it: Code,
+  finance: DollarSign,
+  health: HeartPulse,
+  gaming: Gamepad2,
+  ecommerce: ShoppingCart,
+  cybersecurity: ShieldCheck,
+  mobile: Smartphone,
+};
+
+function getCategoryIcon(slug: string) {
+  return categoryIcons[slug.toLowerCase()] ?? Lightbulb;
+}
 
 const Filters = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
-  const handleSearch = useDebouncedCallback((term) => {
-    console.log(`Searching... ${term}`);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const selectedCategory = searchParams.get("category");
 
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch("/api/category/list?offset=0&limit=100")
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Не удалось загрузить категории");
+        return (await response.json()) as CategoryResponse;
+      })
+      .then((data) => {
+        if (!cancelled) setCategories(data.items);
+      })
+      .catch(() => {
+        if (!cancelled) setCategories([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const updateFilters = (category?: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (category) params.set("category", category);
+    else params.delete("category");
+    params.delete("page");
+    const queryString = params.toString();
+    replace(queryString ? `${pathname}?${queryString}` : pathname);
+  };
+
+  const handleSearch = useDebouncedCallback((term: string) => {
     const params = new URLSearchParams(searchParams);
-    if (term) {
-      params.set("query", term);
+    if (term.trim()) {
+      params.set("query", term.trim());
     } else {
       params.delete("query");
     }
-    replace(`${pathname}?${params.toString()}`);
+    params.delete("page");
+    const queryString = params.toString();
+    replace(queryString ? `${pathname}?${queryString}` : pathname);
   }, 300);
 
   return (
@@ -86,7 +94,7 @@ const Filters = () => {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search startup ideas..."
+            placeholder="Поиск идей стартапов..."
             onChange={(e) => handleSearch(e.target.value)}
             className="pl-10"
             defaultValue={searchParams.get("query")?.toString()}
@@ -99,12 +107,17 @@ const Filters = () => {
           Быстрые действия
         </h3>
         <div className="space-y-2">
-          <Button variant="default" className="w-full justify-start" size="sm">
-            <Sparkles className="w-4 h-4 mr-2" />
-            Сгенерировать идею
+          <Button variant="outline" className="w-full justify-start" size="sm" asChild>
+            <Link href="/startup/create">
+              <Plus className="w-4 h-4" />
+              Создать стартап
+            </Link>
           </Button>
-          <Button variant="outline" className="w-full justify-start" size="sm">
-            Создать стартап
+          <Button variant="ghost" className="w-full justify-start" size="sm" asChild>
+            <Link href="/categories">
+              <LayoutGrid className="w-4 h-4" />
+              Все категории
+            </Link>
           </Button>
         </div>
       </div>
@@ -116,23 +129,25 @@ const Filters = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setSelectedCategory(null)}
+              onClick={() => updateFilters()}
               className="text-xs h-6 px-2"
             >
-              Clear
+              Сбросить
             </Button>
           )}
         </div>
 
         <div className="space-y-2">
           {categories.map((category) => {
-            const Icon = category.icon;
-            const isSelected = selectedCategory === category.name;
+            const Icon = getCategoryIcon(category.slug);
+            const isSelected = selectedCategory === category.slug;
 
             return (
               <button
-                key={category.name}
-                onClick={() => setSelectedCategory(category.name)}
+                key={category.id}
+                onClick={() =>
+                  updateFilters(isSelected ? undefined : category.slug)
+                }
                 className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-all duration-200 cursor-pointer ${
                   isSelected
                     ? "bg-accent border border-primary/20"
@@ -140,7 +155,7 @@ const Filters = () => {
                 }`}
               >
                 <div className="flex items-center space-x-3">
-                  <div className={`p-1.5 rounded-md ${category.color}`}>
+                  <div className="rounded-md bg-primary/10 p-1.5 text-primary">
                     <Icon className="w-3 h-3" />
                   </div>
                   <span className="text-sm font-medium text-foreground">
@@ -156,7 +171,7 @@ const Filters = () => {
         </div>
       </div>
 
-      <div className="mt-6 pt-6 border-t border-border">
+      {/* <div className="mt-6 pt-6 border-t border-border">
         <h3 className="text-sm font-semibold text-foreground mb-3">
           Trending Tags
         </h3>
@@ -170,10 +185,10 @@ const Filters = () => {
               >
                 {tag}
               </Badge>
-            )
+            ),
           )}
         </div>
-      </div>
+      </div> */}
     </aside>
   );
 };

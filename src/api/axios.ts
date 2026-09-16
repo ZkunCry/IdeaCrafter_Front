@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API } from "../constants/config";
-import { useUserStore } from "../store/user";
 import { toast } from "sonner";
+import { readApiErrorMessage } from "../lib/api-error";
 
 export const axiosInstance = axios.create({
   baseURL: API.BASE_URL,
@@ -15,12 +15,30 @@ const refreshClient = axios.create({
 
 let refreshPromise: Promise<void> | null = null;
 
+declare module "axios" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface AxiosRequestConfig<D = any> {
+    skipErrorToast?: boolean;
+  }
+}
+
+/**
+ * Requests that render their own inline error state pass `skipErrorToast` so a
+ * duplicate global toast does not fire on top of it.
+ */
+export const silentRequest = { skipErrorToast: true } as const;
+
+type RetriableConfig = {
+  _retry?: boolean;
+  skipErrorToast?: boolean;
+};
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    const originalRequest = error.config as RetriableConfig | undefined;
 
-    if (error.response?.status === 401 && !originalRequest?._retry) {
+    if (originalRequest && error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
@@ -35,16 +53,18 @@ axiosInstance.interceptors.response.use(
 
         await refreshPromise;
 
-        return axiosInstance(originalRequest);
-      } catch (refreshError: any) {
-        useUserStore.getState().actions.deleteCredentials();
-
+        return axiosInstance(error.config);
+      } catch (refreshError: unknown) {
         return Promise.reject(refreshError);
       }
     }
-    toast("Something went wrong", {
-      description: error.response?.data?.message || error.message,
-    });
+
+    if (!originalRequest?.skipErrorToast) {
+      toast.error("Что-то пошло не так", {
+        description:
+          readApiErrorMessage(error.response?.data) ?? error.message,
+      });
+    }
 
     return Promise.reject(error);
   },

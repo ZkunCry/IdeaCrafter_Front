@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const UserStoreContext =
-  createContext<ReturnType<typeof createUserStore>>(null);
+  createContext<ReturnType<typeof createUserStore> | null>(null);
 
 export default function StoreProvider({ children, initialUser }: Props) {
   const storeRef = useRef<ReturnType<typeof createUserStore> | null>(null);

@@ -47,12 +47,13 @@ const SignUp = () => {
       setCredentials(responseData);
       router.push("/");
       toast("Account created!", {
-        description: "Welcome to IdeaCrafter.",
+        description: "Добро пожаловать в IdeaCrafter.",
       });
     } catch (error) {
-      toast.error("Account wasn't created", {
+      toast.error("Аккаунт не был создан", {
         description:
-          error?.message ?? "Something went wrong. Please try again later.",
+          (error instanceof Error ? error.message : undefined) ??
+          "Что-то пошло не так. Пожалуйста, попробуйте позже.",
       });
     }
   };
@@ -74,10 +75,11 @@ const SignUp = () => {
         <Card className="shadow-xl border-0 bg-card/95 backdrop-blur">
           <CardHeader className="text-center space-y-1">
             <CardTitle className="text-2xl font-bold">
-              Create an account
+              Создать аккаунт
             </CardTitle>
             <CardDescription>
-              Join IdeaCrafter and start building your startup ideas
+              Присоединяйтесь к IdeaCrafter и начните строить свои идеи
+              стартапов
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -91,9 +93,12 @@ const SignUp = () => {
                   name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Full Name</FormLabel>
+                      <FormLabel>Полное имя</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your full name" {...field} />
+                        <Input
+                          placeholder="Введите ваше полное имя"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -105,11 +110,11 @@ const SignUp = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>Электронная почта</FormLabel>
                       <FormControl>
                         <Input
                           type="email"
-                          placeholder="Enter your email"
+                          placeholder="Введите ваш email"
                           {...field}
                         />
                       </FormControl>
@@ -123,12 +128,12 @@ const SignUp = () => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>Пароль</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
                             type={showPassword ? "text" : "password"}
-                            placeholder="Enter your password"
+                            placeholder="Введите ваш пароль"
                             {...field}
                             className="pr-10"
                           />
@@ -155,12 +160,12 @@ const SignUp = () => {
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
+                      <FormLabel>Подтвердить пароль</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
                             type={showPassword ? "text" : "password"}
-                            placeholder="Confirm your password"
+                            placeholder="Подтвердите ваш пароль"
                             {...field}
                             className="pr-10"
                           />
@@ -198,19 +203,19 @@ const SignUp = () => {
                             htmlFor="agreeToTerms"
                             className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                           >
-                            I agree to the{" "}
+                            Я согласен с{" "}
                             <Link
                               href="/terms"
                               className="text-primary hover:underline"
                             >
-                              Terms of Service
+                              Условиями предоставления услуг
                             </Link>{" "}
-                            and{" "}
+                            и{" "}
                             <Link
                               href="/privacy"
                               className="text-primary hover:underline"
                             >
-                              Privacy Policy
+                              Политикой конфиденциальности
                             </Link>
                           </label>
                         </div>
@@ -226,20 +231,20 @@ const SignUp = () => {
                   disabled={form.formState.isSubmitting}
                 >
                   {form.formState.isSubmitting
-                    ? "Creating account..."
-                    : "Create Account"}
+                    ? "Создание аккаунта..."
+                    : "Создать аккаунт"}
                 </Button>
               </form>
             </Form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                Already have an account?{" "}
+                Уже есть учетная запись?{" "}
                 <Link
                   href="/auth/signin"
                   className="text-primary hover:underline font-medium"
                 >
-                  Sign in
+                  Войти
                 </Link>
               </p>
             </div>

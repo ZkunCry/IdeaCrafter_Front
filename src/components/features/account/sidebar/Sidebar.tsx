@@ -14,21 +14,24 @@ import {
 import Link from "next/link";
 import React from "react";
 import { usePathname } from "next/navigation";
-import { Bookmark, FolderOpen, User, Users } from "lucide-react";
+import { FolderOpen, Heart, Send, User } from "lucide-react";
 const sidebarItems = [
   { title: "Аккаунт", url: "/account", icon: User },
   { title: "Мои стартапы", url: "/account/startups", icon: FolderOpen },
-  { title: "Избранные", url: "/account/favorites", icon: Bookmark },
+  { title: "Избранные", url: "/account/favorites", icon: Heart },
 ];
 
 const membershipsItems = [
-  { title: "Участники", url: "/account/memberships", icon: Users },
+  { title: "Мои заявки", url: "/account/applications", icon: Send },
 ];
 
 const SidebarAccount = () => {
   const pathname = usePathname();
 
-  const isActive = (url: string) => pathname === url;
+  const isActive = (url: string) =>
+    url === "/account"
+      ? pathname === url || pathname === "/account/change-password"
+      : pathname === url || pathname.startsWith(`${url}/`);
 
   return (
     <SidebarProvider>
@@ -60,7 +63,7 @@ const SidebarAccount = () => {
           </SidebarGroup>
 
           <SidebarGroup className="mt-4">
-            <SidebarGroupLabel className="text-lg">Участники</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-lg">Участие</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {membershipsItems.map((item) => (

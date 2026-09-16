@@ -1,6 +1,6 @@
 import HeaderMain from "@/src/components/widgets/header/HeaderMain";
 
-export default function Layout({ children }: React.ReactNode) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <HeaderMain />
