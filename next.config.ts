@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  output: "standalone",
   skipTrailingSlashRedirect: true,
   experimental: {
     optimizePackageImports: ["lucide-react", "shadcn-ui"],

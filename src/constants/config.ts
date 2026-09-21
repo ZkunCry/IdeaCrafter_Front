@@ -1,5 +1,13 @@
+// Go API origin as seen from the Next.js server. Read at runtime, so one image
+// works in any environment (in docker compose: http://api:3001).
+export const API_SERVER_URL =
+  process.env.API_SERVER_URL || "http://localhost:3001";
+
 export const API = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api",
+  // The browser goes through the same-origin proxy (app/api/[...proxy]) so auth
+  // cookies stay first-party; server code calls the API directly.
+  BASE_URL:
+    typeof window === "undefined" ? `${API_SERVER_URL}/api` : "/api",
 };
 
 /**

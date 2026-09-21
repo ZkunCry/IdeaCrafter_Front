@@ -1,6 +1,26 @@
 import type { NextRequest } from "next/server";
+import { API_SERVER_URL } from "@/src/constants/config";
 
-const apiServer = `${process.env.API_SERVER_URL || "http://localhost:3001"}/api/`;
+const apiServer = `${API_SERVER_URL}/api/`;
+
+const skippedRequestHeaders = new Set([
+  "host",
+  "connection",
+  "keep-alive",
+  "transfer-encoding",
+  "upgrade",
+  "te",
+  "trailer",
+  "proxy-connection",
+  "content-length",
+]);
+const skippedResponseHeaders = new Set([
+  "connection",
+  "keep-alive",
+  "transfer-encoding",
+  "content-encoding",
+  "content-length",
+]);
 
 async function provider(
   req: NextRequest,
@@ -16,10 +36,16 @@ async function provider(
 
   const headers = new Headers();
   req.headers.forEach((value, key) => {
-    if (key.toLowerCase() !== "host") {
+    if (!skippedRequestHeaders.has(key.toLowerCase())) {
       headers.append(key, value);
     }
   });
+  if (!headers.has("x-forwarded-host")) {
+    headers.set("x-forwarded-host", req.headers.get("host") ?? "");
+  }
+  if (!headers.has("x-forwarded-proto")) {
+    headers.set("x-forwarded-proto", req.nextUrl.protocol.replace(":", ""));
+  }
 
   let body: BodyInit | undefined = undefined;
   if (req.method !== "GET" && req.method !== "HEAD") {
@@ -36,6 +62,7 @@ async function provider(
 
     const responseBody = await res.arrayBuffer();
     const responseHeaders = new Headers(res.headers);
+    skippedResponseHeaders.forEach((name) => responseHeaders.delete(name));
 
     return new Response(responseBody, {
       status: res.status,
@@ -52,6 +79,7 @@ async function provider(
 export {
   provider as DELETE,
   provider as GET,
+  provider as PATCH,
   provider as POST,
   provider as PUT,
 };

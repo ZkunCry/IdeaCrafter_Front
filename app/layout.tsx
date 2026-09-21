@@ -13,8 +13,8 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "IdeaCrafter",
-  description: "IdeaCrafter ",
+  title: "IdeaCrafter | Главная страница",
+  description: "IdeaCrafter",
 };
 
 export default async function RootLayout({

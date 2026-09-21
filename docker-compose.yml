@@ -1,0 +1,22 @@
+name: idea_crafter_front
+
+services:
+  web:
+    image: ${WEB_IMAGE:-idea-crafter-front:local}
+    build:
+      context: .
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      API_SERVER_URL: ${API_SERVER_URL:-http://api:3001}
+    ports:
+      - "127.0.0.1:3000:3000"
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true
+    name: ${BACKEND_NETWORK:-startup_back_default}

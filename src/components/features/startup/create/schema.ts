@@ -42,17 +42,11 @@ export const defaultValues: StartupFormValues = {
   files: null,
 };
 
-/**
- * Maps a saved startup onto the form shape. `files` starts empty because the
- * stored logo is a URL, not an upload: leaving it null tells the API to keep
- * the current one.
- */
 export const startupToFormValues = (startup: Startup): StartupFormValues => ({
   name: startup.name ?? "",
   description: startup.description ?? "",
   short_description: startup.short_description ?? "",
-  // An id that is not a positive number (e.g. the old "ID" key from the API)
-  // would become NaN in the multi-select and silently block form submission.
+
   category_ids: (startup.categories ?? [])
     .map((category) => Number(category.id))
     .filter((id) => Number.isInteger(id) && id > 0),

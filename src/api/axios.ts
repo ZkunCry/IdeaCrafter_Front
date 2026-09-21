@@ -16,16 +16,12 @@ const refreshClient = axios.create({
 let refreshPromise: Promise<void> | null = null;
 
 declare module "axios" {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   interface AxiosRequestConfig<D = any> {
     skipErrorToast?: boolean;
   }
 }
 
-/**
- * Requests that render their own inline error state pass `skipErrorToast` so a
- * duplicate global toast does not fire on top of it.
- */
 export const silentRequest = { skipErrorToast: true } as const;
 
 type RetriableConfig = {

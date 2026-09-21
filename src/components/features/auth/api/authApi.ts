@@ -1,4 +1,5 @@
 import { axiosInstance } from "@/src/api/axios";
+import { API } from "@/src/constants/config";
 export interface AuthCredentials {
   email: string;
   password: string;
@@ -32,7 +33,7 @@ export const AuthService = {
       .map((c) => `${c.name}=${c.value}`)
       .join("; ");
     if (!cookieString) return null;
-    const response = await fetch("http://localhost:3001/api/auth/me", {
+    const response = await fetch(`${API.BASE_URL}/auth/me`, {
       headers: {
         Cookie: cookieString,
         "Content-Type": "application/json",

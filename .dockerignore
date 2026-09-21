@@ -1,0 +1,17 @@
+.git
+.next
+node_modules
+out
+coverage
+.env*
+!.env.example
+*.tsbuildinfo
+next-env.d.ts
+Dockerfile
+docker-compose*.yml
+DEPLOY.md
+.agents
+.mcp.json
+skills-lock.json
+.vscode
+.idea
